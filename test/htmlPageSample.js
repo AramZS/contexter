@@ -1,4 +1,4 @@
-var htmlPage = `
+var topHtml = `
 <!DOCTYPE html>
 <html>
 
@@ -15,98 +15,110 @@ var htmlPage = `
   <link rel="canonical" href="http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html">
 
   <link rel="alternate" type="application/rss+xml" title="Fight With Tools by AramZS" href="http://aramzs.github.io/feed.xml">
+`;
 
-  <meta name="author" content="Aram Zucker-Scharff" />
-
-  <meta property="og:title" content="How to make your Jekyll site show up on social">
-  <meta property="og:site_name" content="Fight With Tools by AramZS" />
-  <meta property="og:description" content="Here's how to make Jekyll posts easier for others to see and share on social networks.">
-  <meta property="og:url" content="http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html" />
-  <meta property="og:locale" content="en_US" />
-  <meta name="twitter:site" content="@chronotope" />
-  <meta name="twitter:description" content="Here's how to make Jekyll posts easier for others to see and share on social networks." />
+var metaOg = `
+<meta property="og:title" content="How to make your Jekyll site show up on social">
+<meta property="og:site_name" content="Fight With Tools by AramZS" />
+<meta property="og:description" content="Here's how to make Jekyll posts easier for others to see and share on social networks.">
+<meta property="og:url" content="http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html" />
+<meta property="og:locale" content="en_US" />
 
 
-  	<!-- Article specific OG data -->
-  	<meta property="og:type" content="article" />
-  	<meta property="article:published_time" content="2015-11-11 10:34:51 -0500" />
+	<!-- Article specific OG data -->
+	<meta property="og:type" content="article" />
+	<meta property="article:published_time" content="2015-11-11 10:34:51 -0500" />
 
-  	<meta property="article:author" content="http://facebook.com/aramzs" />
-    <meta property="article:publisher" content="https://www.facebook.com/aramzs" />
-  	<meta property="article:section" content="Code" />
+	<meta property="article:author" content="http://facebook.com/aramzs" />
+  <meta property="article:publisher" content="https://www.facebook.com/aramzs" />
+	<meta property="article:section" content="Code" />
 
-  		<meta property="article:tag" content="jekyll" />
+		<meta property="article:tag" content="jekyll" />
 
-  		<meta property="article:tag" content="social-media" />
+		<meta property="article:tag" content="social-media" />
 
-	<meta name="keywords" content="jekyll, social-media" />
+	<meta property="og:image" content="https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg" />
 
-  	<meta name="twitter:card" content="summary_large_image" />
-  	<meta name="twitter:creator" content="@chronotope" />
-  	<meta name="twitter:title" content="How to make your Jekyll site show up on social" />
+`;
 
-	  	<meta property="og:image" content="https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg" />
-	  	<meta name="twitter:image" content="https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg" />
+var metaTwitter = `
 
+<meta name="twitter:site" content="@chronotope" />
+<meta name="twitter:description" content="Here's how to make Jekyll posts easier for others to see and share on social networks." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:creator" content="@chronotope" />
+<meta name="twitter:title" content="How to make your Jekyll site show up on social" />
+<meta name="twitter:image" content="https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg" />
+`;
 
+var metaDC = `
+<meta name="DC.Format" content="video/mpeg; 10 minutes" />
+<meta name="DC.Language" content="en" />
+<meta name="DC.Publisher" content="publisher-name" />
+<meta name="DC.Title" content="HYP" />
+`;
 
-		<script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "How to make your Jekyll site show up on social",
-        "description": "Here's how to make Jekyll posts easier for others to see and share on social networks.",
-        "image": [
+var metaJson = `
+<script type="application/ld+json">
+  {
+	  "@context": "http://schema.org",
+	  "@type": "BlogPosting",
+	  "headline": "How to make your Jekyll site show up on social",
+	  "description": "Here's how to make Jekyll posts easier for others to see and share on social networks.",
+	  "image": [
 
-                "https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg"
+			  "https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg"
 
-        ],
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
-        },
-        "datePublished": "2015-11-11 10:34:51 -0500",
-        "dateModified": "2015-11-11 10:34:51 -0500",
-        "isAccessibleForFree": "True",
+	  ],
+	  "mainEntityOfPage": {
+		  "@type": "WebPage",
+		  "@id": "http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
+	  },
+	  "datePublished": "2015-11-11 10:34:51 -0500",
+	  "dateModified": "2015-11-11 10:34:51 -0500",
+	  "isAccessibleForFree": "True",
 
-        "isPartOf": {
-            "@type": ["CreativeWork", "Product", "Blog"],
-            "name": "Fight With Tools",
-            "productID": "aramzs.github.io"
-        },
-        "license": "http://creativecommons.org/licenses/by-sa/4.0/",
-        "author": {
-            "@type": "Person",
-            "name": "Aram Zucker-Scharff",
-            "description": "Aram Zucker-Scharff is Director for Ad Engineering at Washington Post, lead dev for PressForward and a consultant. Tech solutions for journo problems.",
-            "sameAs": "http://aramzs.github.io/aramzs/",
-            "image": {
-                "@type": "ImageObject",
-                "url": "https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/Aram-Zucker-Scharff-square.jpg"
-            },
-            "givenName": "Aram",
-            "familyName": "Zucker-Scharff",
-            "alternateName": "AramZS",
-            "publishingPrinciples": "http://aramzs.github.io/about/"
-        },
-        "publisher": {
-            "@type": "Organization",
-            "name": "Fight With Tools",
-            "description": "A site discussing how to imagine, build, analyze and use cool code and web tools. Better websites, better stories, better developers. Technology won't save the world, but you can.",
-            "sameAs": "http://aramzs.github.io",
-            "logo": {
-                "@type": "ImageObject",
-                "url": "https://41.media.tumblr.com/709bb3c371b9924add351bfe3386e946/tumblr_nxdq8uFdx81qzocgko1_1280.jpg"
-            },
-            "publishingPrinciples": "http://aramzs.github.io/about/"
-        }
-    }
+	  "isPartOf": {
+		  "@type": ["CreativeWork", "Product", "Blog"],
+		  "name": "Fight With Tools",
+		  "productID": "aramzs.github.io"
+	  },
+	  "license": "http://creativecommons.org/licenses/by-sa/4.0/",
+	  "author": {
+		  "@type": "Person",
+		  "name": "Aram Zucker-Scharff",
+		  "description": "Aram Zucker-Scharff is Director for Ad Engineering at Washington Post, lead dev for PressForward and a consultant. Tech solutions for journo problems.",
+		  "sameAs": "http://aramzs.github.io/aramzs/",
+		  "image": {
+			  "@type": "ImageObject",
+			  "url": "https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/Aram-Zucker-Scharff-square.jpg"
+		  },
+		  "givenName": "Aram",
+		  "familyName": "Zucker-Scharff",
+		  "alternateName": "AramZS",
+		  "publishingPrinciples": "http://aramzs.github.io/about/"
+	  },
+	  "publisher": {
+		  "@type": "Organization",
+		  "name": "Fight With Tools",
+		  "description": "A site discussing how to imagine, build, analyze and use cool code and web tools. Better websites, better stories, better developers. Technology won't save the world, but you can.",
+		  "sameAs": "http://aramzs.github.io",
+		  "logo": {
+			  "@type": "ImageObject",
+			  "url": "https://41.media.tumblr.com/709bb3c371b9924add351bfe3386e946/tumblr_nxdq8uFdx81qzocgko1_1280.jpg"
+		  },
+		  "publishingPrinciples": "http://aramzs.github.io/about/"
+	  }
+  }
 </script>
+`;
 
+var metaBasics = `
+<meta name="author" content="Aram Zucker-Scharff" />
+<meta name="keywords" content="jekyll, social-media" />
+`;
 
-
-
-
+var baseHtml = `
   	<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/favicon.ico">
 	<script>
 	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -386,4 +398,29 @@ excerpt: "Jekyll is pretty cool, here's how to make writing with it easier for o
 
 </html>
 `;
-module.exports = htmlPage;
+module.exports = (testTypes) => {
+	let htmlBlock = topHtml;
+	testTypes.forEach((type) => {
+		switch (type) {
+			case "og":
+				htmlBlock += metaOg;
+				break;
+			case "json":
+				htmlBlock += metaJson;
+				break;
+			case "dc":
+				htmlBlock += metaDC;
+				break;
+			case "twitter":
+				htmlBlock += metaTwitter;
+				break;
+			case "basic":
+				htmlBlock += metaBasics;
+				break;
+			default:
+				break;
+		}
+	});
+	htmlBlock += baseHtml;
+	return htmlBlock;
+};

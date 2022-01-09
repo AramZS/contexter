@@ -68,12 +68,12 @@ const fetchOEmbed = async (url) => {
 
 const pullMetadataFromRDFProperty = (documentObj, topNode, propType) => {
 	const graphNodes = documentObj.querySelectorAll(
-		`meta[${propType}^='${topNode}:']`
+		`meta[${propType}^='${topNode}']`
 	);
 	const openGraphObject = Array.from(graphNodes).reduce((prev, curr) => {
 		const keyValue = curr.attributes
 			.item(0)
-			.nodeValue.replace(`${topNode}:`, "");
+			.nodeValue.replace(`${topNode}`, "");
 		if (prev.hasOwnProperty(keyValue)) {
 			const lastValue = prev[keyValue];
 			if (Array.isArray(lastValue)) {
@@ -94,38 +94,47 @@ const processMetadata = (DOMWindowObject) => {
 	const metaInfo = DOMWindowObject.document.getElementsByTagName("meta");
 	const openGraphObject = pullMetadataFromRDFProperty(
 		DOMWindowObject.document,
-		"og",
+		"og:",
 		"property"
 	);
 	let openGraphTypeObject = {};
 	if (openGraphObject.type !== false) {
 		openGraphTypeObject = pullMetadataFromRDFProperty(
 			DOMWindowObject.document,
-			openGraphObject.type,
+			openGraphObject.type + ":",
 			"property"
 		);
 	}
 	const twitterGraphObject = pullMetadataFromRDFProperty(
 		DOMWindowObject.document,
-		"twitter",
+		"twitter:",
+		"name"
+	);
+	const dublinCoreGraphObject = pullMetadataFromRDFProperty(
+		DOMWindowObject.document,
+		"DC.",
 		"name"
 	);
 	// console.log("Twitter Object", twitterGraphObject);
 	const headMetadata = {
 		metadata: {
-			author: metaInfo.author.content,
+			author: metaInfo.author ? metaInfo.author.content : false,
 			title: DOMWindowObject.document.querySelector("title").text,
-			description: metaInfo.description.content,
+			description: metaInfo.description
+				? metaInfo.description.content
+				: false,
 			canonical: DOMWindowObject.document.querySelector(
 				"link[rel='canonical']"
 			).href,
-			keyvalues: [
-				...metaInfo.keywords.content
-					.split(",")
-					.map((value) => value.trim()),
-			],
-			dublinCore: {}, // https://en.wikipedia.org/wiki/Dublin_Core#DCMI_Metadata_Terms
+			keywords: metaInfo.keywords
+				? [
+						...metaInfo.keywords.content
+							.split(",")
+							.map((value) => value.trim()),
+				  ]
+				: [],
 		},
+		dublinCore: {}, // https://en.wikipedia.org/wiki/Dublin_Core#DCMI_Metadata_Terms
 		opengraph: {
 			title: false,
 			description: false,
@@ -157,7 +166,21 @@ const processMetadata = (DOMWindowObject) => {
 		Object.assign(headMetadata.opengraph.typeObject, openGraphTypeObject);
 	}
 	Object.assign(headMetadata.twitter, twitterGraphObject);
+	Object.assign(headMetadata.dublinCore, dublinCoreGraphObject);
 	return headMetadata;
+};
+
+const jsonData = (DOMWindowObject) => {
+	const jsonDataTag = DOMWindowObject.document.querySelector(
+		'script[type="application/ld+json"]'
+	);
+	if (!jsonDataTag) {
+		return false;
+	}
+	if (!jsonDataTag.textContent) {
+		return false;
+	}
+	return JSON.parse(jsonDataTag.textContent);
 };
 
 const getLinkData = async (linkObj) => {
@@ -221,14 +244,7 @@ const getLinkData = async (linkObj) => {
 		// Meta name
 		Object.assign(linkDataObj, processMetadata(DOMWindowObject));
 		// JSON LD
-		Object.assign(
-			linkDataObj.jsonLd,
-			JSON.parse(
-				DOMWindowObject.document.querySelector(
-					'script[type="application/ld+json"]'
-				).textContent
-			)
-		);
+		Object.assign(linkDataObj.jsonLd, jsonData(DOMWindowObject));
 	} else {
 		return false;
 	}
@@ -238,6 +254,7 @@ module.exports = {
 	getLinkData,
 	processMetadata,
 	fetchOEmbed,
+	jsonData,
 	fetchUrl,
 	getRequestHeaders,
 };

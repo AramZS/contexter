@@ -52,7 +52,13 @@ describe("The Link Request Module", function () {
 		});
 	});
 	describe("handle an HTML document's metadata", function () {
-		const htmlPage = require("./htmlPageSample");
+		const htmlPage = require("./htmlPageSample")([
+			"og",
+			"json",
+			"dc",
+			"twitter",
+			"basic",
+		]);
 		const jsdom = require("jsdom");
 		const { JSDOM } = jsdom;
 		it("should retrieve basic metadata from an HTML document", async function () {
@@ -68,7 +74,7 @@ describe("The Link Request Module", function () {
 			result.metadata.canonical.should.equal(
 				"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
 			);
-			expect(result.metadata.keyvalues).to.have.members([
+			expect(result.metadata.keywords).to.have.members([
 				"jekyll",
 				"social-media",
 			]);
@@ -86,7 +92,7 @@ describe("The Link Request Module", function () {
 			result.metadata.canonical.should.equal(
 				"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
 			);
-			expect(result.metadata.keyvalues).to.have.members([
+			expect(result.metadata.keywords).to.have.members([
 				"jekyll",
 				"social-media",
 			]);
@@ -133,6 +139,83 @@ describe("The Link Request Module", function () {
 			);
 			result.twitter.image.should.equal(
 				"https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg"
+			);
+		});
+		it("should retrieve DublinCore type data from an HTML document", function () {
+			const jsDom = new JSDOM(htmlPage);
+			const result = linkModule.processMetadata(jsDom.window);
+			result.dublinCore.Format.should.equal("video/mpeg; 10 minutes");
+			result.dublinCore.Language.should.equal("en");
+			result.dublinCore.Publisher.should.equal("publisher-name");
+			result.dublinCore.Title.should.equal("HYP");
+		});
+		it("should retrieve JSON LD type data from an HTML document", function () {
+			const jsDom = new JSDOM(htmlPage);
+			const result = linkModule.jsonData(jsDom.window);
+			result["@type"].should.equal("BlogPosting");
+			result.headline.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+			result.description.should.equal(
+				"Here's how to make Jekyll posts easier for others to see and share on social networks."
+			);
+			expect(result.image).to.have.members([
+				"https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg",
+			]);
+		});
+		it("should process an HTML document with minimal metadata", function () {
+			const htmlPage = require("./htmlPageSample")([]);
+			const jsdom = require("jsdom");
+			const { JSDOM } = jsdom;
+			const jsDom = new JSDOM(htmlPage);
+			const jsDomResult = linkModule.jsonData(jsDom.window);
+			const result = linkModule.processMetadata(jsDom.window);
+			result.metadata.title.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+		});
+		it("should process an HTML document with only OG metadata", function () {
+			const htmlPage = require("./htmlPageSample")(["og"]);
+			const jsdom = require("jsdom");
+			const { JSDOM } = jsdom;
+			const jsDom = new JSDOM(htmlPage);
+			const jsDomResult = linkModule.jsonData(jsDom.window);
+			const result = linkModule.processMetadata(jsDom.window);
+			result.opengraph.title.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+		});
+		it("should process an HTML document with only JSON metadata", function () {
+			const htmlPage = require("./htmlPageSample")(["json"]);
+			const jsdom = require("jsdom");
+			const { JSDOM } = jsdom;
+			const jsDom = new JSDOM(htmlPage);
+			const jsDomResult = linkModule.jsonData(jsDom.window);
+			jsDomResult.headline.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+			jsDomResult.isPartOf.name.should.equal("Fight With Tools");
+			jsDomResult.author.name.should.equal("Aram Zucker-Scharff");
+			jsDomResult.author.image.url.should.equal(
+				"https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/Aram-Zucker-Scharff-square.jpg"
+			);
+			const result = linkModule.processMetadata(jsDom.window);
+			result.metadata.title.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+		});
+		it("should process an HTML document with only OG metadata", function () {
+			const htmlPage = require("./htmlPageSample")(["og", "twitter"]);
+			const jsdom = require("jsdom");
+			const { JSDOM } = jsdom;
+			const jsDom = new JSDOM(htmlPage);
+			const jsDomResult = linkModule.jsonData(jsDom.window);
+			const result = linkModule.processMetadata(jsDom.window);
+			result.metadata.title.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+			result.opengraph.title.should.equal(
+				"How to make your Jekyll site show up on social"
 			);
 		});
 	});

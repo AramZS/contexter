@@ -183,7 +183,12 @@ const jsonData = (DOMWindowObject) => {
 	return JSON.parse(jsonDataTag.textContent);
 };
 
-const getLinkData = async (linkObj) => {
+const getLinkData = async (
+	linkObj = {
+		link: "",
+		sanitizedLink: "",
+	}
+) => {
 	const personObject = {
 		"@type": false,
 		name: false,
@@ -236,15 +241,18 @@ const getLinkData = async (linkObj) => {
 			editor: personObject,
 		},
 	};
-	const response = await fetchUrl(link);
+	const response = await fetchUrl(linkObj.sanitizedLink);
 	if (response) {
-		linkDataObj.oembed = fetchOEmbed(link);
-		const jsDom = new JSDOM(response.text);
+		linkDataObj.status = response.status;
+		const responseText = await response.text();
+		linkDataObj.oembed = await fetchOEmbed(linkObj.sanitizedLink);
+		const jsDom = new JSDOM(responseText);
 		const DOMWindowObject = jsDom.window;
 		// Meta name
 		Object.assign(linkDataObj, processMetadata(DOMWindowObject));
 		// JSON LD
 		Object.assign(linkDataObj.jsonLd, jsonData(DOMWindowObject));
+		return linkDataObj;
 	} else {
 		return false;
 	}

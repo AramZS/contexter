@@ -79,24 +79,6 @@ describe("The Link Request Module", function () {
 				"social-media",
 			]);
 		});
-		it("should retrieve basic metadata from an HTML document", async function () {
-			const jsDom = new JSDOM(htmlPage);
-			const result = linkModule.processMetadata(jsDom.window);
-			result.metadata.title.should.equal(
-				"How to make your Jekyll site show up on social"
-			);
-			result.metadata.author.should.equal("Aram Zucker-Scharff");
-			result.metadata.description.should.equal(
-				"Here's how to make Jekyll posts easier for others to see and share on social networks."
-			);
-			result.metadata.canonical.should.equal(
-				"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
-			);
-			expect(result.metadata.keywords).to.have.members([
-				"jekyll",
-				"social-media",
-			]);
-		});
 		it("should retrieve opengraph data from an HTML document", function () {
 			const jsDom = new JSDOM(htmlPage);
 			const result = linkModule.processMetadata(jsDom.window);
@@ -217,6 +199,61 @@ describe("The Link Request Module", function () {
 			result.opengraph.title.should.equal(
 				"How to make your Jekyll site show up on social"
 			);
+		});
+	});
+	describe("should create link objects from a domain requests", function () {
+		this.timeout(5000);
+		it("should resolve a basic URL", async function () {
+			const result = await linkModule.getLinkData({
+				sanitizedLink:
+					"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html",
+				link: "http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html",
+			});
+			// console.log("LinkData ", result);
+			result.status.should.equal(200);
+			result.metadata.title.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+			result.metadata.author.should.equal("Aram Zucker-Scharff");
+			result.metadata.description.should.equal(
+				"Here's how to make Jekyll posts easier for others to see and share on social networks."
+			);
+			result.metadata.canonical.should.equal(
+				"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
+			);
+			expect(result.metadata.keywords).to.have.members([
+				"jekyll",
+				"social-media",
+			]);
+			result.opengraph.title.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+			result.opengraph.locale.should.equal("en_US");
+			result.opengraph.description.should.equal(
+				"Here's how to make Jekyll posts easier for others to see and share on social networks."
+			);
+			result.opengraph.url.should.equal(
+				"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
+			);
+			result.twitter.card.should.equal("summary_large_image");
+			result.twitter.creator.should.equal("@chronotope");
+			result.twitter.title.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+			result.twitter.image.should.equal(
+				"https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg"
+			);
+			Object.keys(result.dublinCore).length.should.equal(0);
+			result.jsonLd["@type"].should.equal("BlogPosting");
+			result.jsonLd.headline.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+			result.jsonLd.description.should.equal(
+				"Here's how to make Jekyll posts easier for others to see and share on social networks."
+			);
+			expect(result.jsonLd.image).to.have.members([
+				"https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg",
+			]);
 		});
 	});
 });

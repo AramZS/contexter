@@ -91,7 +91,7 @@ describe("The Link Request Module", function () {
 				"social-media",
 			]);
 		});
-		it("should retrieve opengraph data from an HTML document", async function () {
+		it("should retrieve opengraph data from an HTML document", function () {
 			const jsDom = new JSDOM(htmlPage);
 			const result = linkModule.processMetadata(jsDom.window);
 			result.opengraph.title.should.equal(
@@ -105,7 +105,7 @@ describe("The Link Request Module", function () {
 				"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
 			);
 		});
-		it("should retrieve opengraph type data from an HTML document", async function () {
+		it("should retrieve opengraph type data from an HTML document", function () {
 			const jsDom = new JSDOM(htmlPage);
 			const result = linkModule.processMetadata(jsDom.window);
 			result.opengraph.typeObject.author.should.equal(
@@ -122,6 +122,18 @@ describe("The Link Request Module", function () {
 				"jekyll",
 				"social-media",
 			]);
+		});
+		it("should retrieve twitter type data from an HTML document", function () {
+			const jsDom = new JSDOM(htmlPage);
+			const result = linkModule.processMetadata(jsDom.window);
+			result.twitter.card.should.equal("summary_large_image");
+			result.twitter.creator.should.equal("@chronotope");
+			result.twitter.title.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+			result.twitter.image.should.equal(
+				"https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg"
+			);
 		});
 	});
 });

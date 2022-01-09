@@ -103,6 +103,10 @@ const processMetadata = (DOMWindowObject) => {
 			openGraphObject.type
 		);
 	}
+	const twitterGraphObject = pullMetadataFromRDFProperty(
+		DOMWindowObject.document,
+		"twitter"
+	);
 	const headMetadata = {
 		metadata: {
 			author: metaInfo.author.content,
@@ -148,6 +152,7 @@ const processMetadata = (DOMWindowObject) => {
 	if (openGraphObject.type !== false) {
 		Object.assign(headMetadata.opengraph.typeObject, openGraphTypeObject);
 	}
+	Object.assign(headMetadata.twitter, twitterGraphObject);
 	return headMetadata;
 };
 

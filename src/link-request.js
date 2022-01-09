@@ -3,6 +3,9 @@
 const fetch = (...args) =>
 	import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+
 const { hasProvider, extract } = require("oembed-parser");
 
 const ua =
@@ -43,33 +46,188 @@ const fetchUrl = async (url) => {
 			header: getRequestHeaders(),
 		});
 	} catch (e) {
-		console.error("Fetch Error", e.response.text());
+		if (e.hasOwnProperty("response")) {
+			console.error("Fetch Error in response", e.response.text());
+		} else if (e.code == "ENOTFOUND") {
+			console.error("URL Does Not Exist", e);
+		}
+		return false;
 	}
-	checkStatus(response);
+	response = checkStatus(response);
 	return response;
 };
 
-const fetchOEmbed = async (url, fbAppID, fbClientToken) => {
+const fetchOEmbed = async (url) => {
 	const oembedData = false;
-	if (!process.env.hasOwnProperty("FACEBOOK_APP_ID") && fbAppID) {
-		process.env.FACEBOOK_APP_ID = fbAppID;
-	}
-	if (!process.env.hasOwnProperty("FACEBOOK_CLIENT_TOKEN") && fbClientToken) {
-		process.env.FACEBOOK_CLIENT_TOKEN = fbClientToken;
-	}
-	if (hasProvider(url)) {
+	if (hasProvider(url) && !url.startsWith("https://www.facebook.com")) {
 		return await extract(url);
 	} else {
 		return oembedData;
 	}
 };
 
-const getLinkData = async (link) => {
-	return await fetchUrl(link);
+const pullMetadataFromRDFProperty = (documentObj, topNode) => {
+	const graphNodes = documentObj.querySelectorAll(
+		`meta[property^='${topNode}:']`
+	);
+	const openGraphObject = Array.from(graphNodes).reduce((prev, curr) => {
+		const keyValue = curr.attributes
+			.item(0)
+			.nodeValue.replace(`${topNode}:`, "");
+		if (prev.hasOwnProperty(keyValue)) {
+			const lastValue = prev[keyValue];
+			if (Array.isArray(lastValue)) {
+				prev[keyValue].push(curr.content);
+			} else {
+				prev[keyValue] = [lastValue, curr.content];
+			}
+		} else {
+			prev[keyValue] = curr.content;
+		}
+		return prev;
+	}, {});
+	// console.log("openGraphObject", openGraphObject);
+	return openGraphObject;
+};
+
+const processMetadata = (DOMWindowObject) => {
+	const metaInfo = DOMWindowObject.document.getElementsByTagName("meta");
+	const openGraphObject = pullMetadataFromRDFProperty(
+		DOMWindowObject.document,
+		"og"
+	);
+	let openGraphTypeObject = {};
+	if (openGraphObject.type !== false) {
+		openGraphTypeObject = pullMetadataFromRDFProperty(
+			DOMWindowObject.document,
+			openGraphObject.type
+		);
+	}
+	const headMetadata = {
+		metadata: {
+			author: metaInfo.author.content,
+			title: DOMWindowObject.document.querySelector("title").text,
+			description: metaInfo.description.content,
+			canonical: DOMWindowObject.document.querySelector(
+				"link[rel='canonical']"
+			).href,
+			keyvalues: [
+				...metaInfo.keywords.content
+					.split(",")
+					.map((value) => value.trim()),
+			],
+			dublinCore: {}, // https://en.wikipedia.org/wiki/Dublin_Core#DCMI_Metadata_Terms
+		},
+		opengraph: {
+			title: false,
+			description: false,
+			url: false,
+			site_name: false,
+			locale: false,
+			type: false,
+			typeObject: {
+				published_time: false,
+				modified_time: false,
+				author: false,
+				publisher: false,
+				section: false,
+				tag: [],
+			},
+			image: false,
+		},
+		twitter: {
+			site: false,
+			description: false,
+			card: false,
+			creator: false,
+			title: false,
+			image: false,
+		},
+	};
+	Object.assign(headMetadata.opengraph, openGraphObject);
+	if (openGraphObject.type !== false) {
+		Object.assign(headMetadata.opengraph.typeObject, openGraphTypeObject);
+	}
+	return headMetadata;
+};
+
+const getLinkData = async (linkObj) => {
+	const personObject = {
+		"@type": false,
+		name: false,
+		description: false,
+		sameAs: false,
+		image: {
+			"@type": false,
+			url: false,
+		},
+		givenName: false,
+		familyName: false,
+		alternateName: false,
+		publishingPrinciples: false,
+	};
+	const linkDataObj = {
+		originalLink: linkObj.link,
+		sanitizedLink: linkObj.sanitizedLink,
+		oembed: false,
+		jsonLd: {
+			"@type": false,
+			headline: false,
+			description: false,
+			image: [],
+			mainEntityOfPage: {
+				"@type": false,
+				"@id": false,
+			},
+			datePublished: false,
+			dateModified: false,
+			isAccessibleForFree: false,
+			isPartOf: {
+				"@type": [],
+				name: false,
+				productID: false,
+			},
+			discussionUrl: false,
+			license: false,
+			author: personObject,
+			publisher: {
+				"@type": false,
+				name: false,
+				description: false,
+				sameAs: false,
+				logo: {
+					"@type": false,
+					url: false,
+				},
+				publishingPrinciples: false,
+			},
+			editor: personObject,
+		},
+	};
+	const response = await fetchUrl(link);
+	if (response) {
+		linkDataObj.oembed = fetchOEmbed(link);
+		const jsDom = new JSDOM(response.text);
+		const DOMWindowObject = jsDom.window;
+		// Meta name
+		Object.assign(linkDataObj, processMetadata(DOMWindowObject));
+		// JSON LD
+		Object.assign(
+			linkDataObj.jsonLd,
+			JSON.parse(
+				DOMWindowObject.document.querySelector(
+					'script[type="application/ld+json"]'
+				).textContent
+			)
+		);
+	} else {
+		return false;
+	}
 };
 
 module.exports = {
 	getLinkData,
+	processMetadata,
 	fetchOEmbed,
 	fetchUrl,
 	getRequestHeaders,

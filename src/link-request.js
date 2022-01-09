@@ -66,9 +66,9 @@ const fetchOEmbed = async (url) => {
 	}
 };
 
-const pullMetadataFromRDFProperty = (documentObj, topNode) => {
+const pullMetadataFromRDFProperty = (documentObj, topNode, propType) => {
 	const graphNodes = documentObj.querySelectorAll(
-		`meta[property^='${topNode}:']`
+		`meta[${propType}^='${topNode}:']`
 	);
 	const openGraphObject = Array.from(graphNodes).reduce((prev, curr) => {
 		const keyValue = curr.attributes
@@ -94,19 +94,23 @@ const processMetadata = (DOMWindowObject) => {
 	const metaInfo = DOMWindowObject.document.getElementsByTagName("meta");
 	const openGraphObject = pullMetadataFromRDFProperty(
 		DOMWindowObject.document,
-		"og"
+		"og",
+		"property"
 	);
 	let openGraphTypeObject = {};
 	if (openGraphObject.type !== false) {
 		openGraphTypeObject = pullMetadataFromRDFProperty(
 			DOMWindowObject.document,
-			openGraphObject.type
+			openGraphObject.type,
+			"property"
 		);
 	}
 	const twitterGraphObject = pullMetadataFromRDFProperty(
 		DOMWindowObject.document,
-		"twitter"
+		"twitter",
+		"name"
 	);
+	// console.log("Twitter Object", twitterGraphObject);
 	const headMetadata = {
 		metadata: {
 			author: metaInfo.author.content,

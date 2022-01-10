@@ -206,6 +206,7 @@ const getLinkData = async (
 	const linkDataObj = {
 		originalLink: linkObj.link,
 		sanitizedLink: linkObj.sanitizedLink,
+		htmlText: "",
 		oembed: false,
 		jsonLd: {
 			"@type": false,
@@ -245,6 +246,7 @@ const getLinkData = async (
 	if (response) {
 		linkDataObj.status = response.status;
 		const responseText = await response.text();
+		linkDataObj.htmlText = responseText;
 		linkDataObj.oembed = await fetchOEmbed(linkObj.sanitizedLink);
 		const jsDom = new JSDOM(responseText);
 		const DOMWindowObject = jsDom.window;
@@ -252,6 +254,8 @@ const getLinkData = async (
 		Object.assign(linkDataObj, processMetadata(DOMWindowObject));
 		// JSON LD
 		Object.assign(linkDataObj.jsonLd, jsonData(DOMWindowObject));
+		console.log("linkDataObj");
+		console.dir(linkDataObj, { depth: null });
 		return linkDataObj;
 	} else {
 		return false;

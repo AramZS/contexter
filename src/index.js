@@ -1,13 +1,20 @@
 const sanitizeLink = require("./link-sanitizer");
+const requestLink = require("./link-sanitizer");
 
 module.exports = (link) => {
 	const saneLink = sanitizeLink(link);
-	const linkResult = getLinkData(saneLink);
+	const linkResult = requestLink.getLinkData({
+		sanitizedLink: saneLink,
+		link: link,
+	});
+	if (!linkResult || linkResult.status != 200) {
+		return false;
+	}
 	const linkHTMLEmbed = createLinkHTMLCard(linkResult);
 	return {
 		initialLink: link,
-		retrievedLink: saneLink,
-		linkHTMLEmbed,
-		...linkResult,
+		sanitizedLink: saneLink,
+		htmlEmbed: linkHTMLEmbed,
+		data: linkResult,
 	};
 };

@@ -254,8 +254,8 @@ const getLinkData = async (
 		Object.assign(linkDataObj, processMetadata(DOMWindowObject));
 		// JSON LD
 		Object.assign(linkDataObj.jsonLd, jsonData(DOMWindowObject));
-		console.log("linkDataObj");
-		console.dir(linkDataObj, { depth: null });
+		//console.log("linkDataObj");
+		//console.dir(linkDataObj, { depth: null });
 		return linkDataObj;
 	} else {
 		return false;

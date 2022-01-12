@@ -10,6 +10,7 @@ module.exports = (link) => {
 	if (!linkResult || linkResult.status != 200) {
 		return false;
 	}
+	const linkArchiver = createLinkArchive(saneLink);
 	const linkHTMLEmbed = createLinkHTMLCard(linkResult);
 	return {
 		initialLink: link,

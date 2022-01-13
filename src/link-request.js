@@ -170,6 +170,30 @@ const processMetadata = (DOMWindowObject) => {
 	return headMetadata;
 };
 
+const assignPrimaryProperties = (metadataLinkObj) => {
+	const finalizedMeta = {
+		title: "",
+		description: "",
+		creator: "",
+		publisher: "",
+		date: "",
+		subject: "",
+		topics: "",
+	};
+	if (metadataLinkObj.metadata.title) {
+		finalizedMeta.title = metadataLinkObj.metadata.title;
+	}
+	if (metadataLinkObj.twitter.title) {
+		finalizedMeta.title = metadataLinkObj.twitter.title;
+	}
+	if (metadataLinkObj.opengraph.title) {
+		finalizedMeta.title = metadataLinkObj.opengraph.title;
+	}
+	if (metadataLinkObj.jsonLd.headline) {
+		finalizedMeta.title = metadataLinkObj.jsonLd.headline;
+	}
+};
+
 const jsonData = (DOMWindowObject) => {
 	const jsonDataTag = DOMWindowObject.document.querySelector(
 		'script[type="application/ld+json"]'
@@ -208,6 +232,7 @@ const getLinkData = async (
 		sanitizedLink: linkObj.sanitizedLink,
 		htmlText: "",
 		oembed: false,
+		finalizedMeta: {},
 		jsonLd: {
 			"@type": false,
 			headline: false,
@@ -254,8 +279,13 @@ const getLinkData = async (
 		Object.assign(linkDataObj, processMetadata(DOMWindowObject));
 		// JSON LD
 		Object.assign(linkDataObj.jsonLd, jsonData(DOMWindowObject));
+		linkDataObj.jsonLd.title = linkDataObj.jsonLd.headline;
 		//console.log("linkDataObj");
 		//console.dir(linkDataObj, { depth: null });
+		Object.assign(
+			linkDataObj.finalizedMeta,
+			assignPrimaryProperties(linkDataObj)
+		);
 		return linkDataObj;
 	} else {
 		return false;

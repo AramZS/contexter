@@ -178,20 +178,39 @@ const assignPrimaryProperties = (metadataLinkObj) => {
 		publisher: "",
 		date: "",
 		subject: "",
-		topics: "",
+		topics: [],
 	};
-	if (metadataLinkObj.metadata.title) {
-		finalizedMeta.title = metadataLinkObj.metadata.title;
-	}
-	if (metadataLinkObj.twitter.title) {
-		finalizedMeta.title = metadataLinkObj.twitter.title;
-	}
-	if (metadataLinkObj.opengraph.title) {
-		finalizedMeta.title = metadataLinkObj.opengraph.title;
-	}
-	if (metadataLinkObj.jsonLd.headline) {
-		finalizedMeta.title = metadataLinkObj.jsonLd.headline;
-	}
+	let topicsSet = new Set();
+	let objectProps = [
+		'metadata',
+		'twitter',
+		'opengraph',
+		'jsonLd'
+	]
+	Object.keys(finalizedMeta).forEach((key) => {
+		if (key == "topics"){
+			if (Array.isArray(metadataLinkObj[prop][key])){
+				objectProps.forEach((prop) => {
+					metadataLinkObj[prop][key].forEach((v) => {
+						topicsSet.add(v)
+					})
+				})
+			}
+		} else {
+			if (metadataLinkObj.metadata[key]) {
+				finalizedMeta[key] = metadataLinkObj.metadata[key];
+			}
+			if (metadataLinkObj.twitter[key]) {
+				finalizedMeta[key] = metadataLinkObj.twitter[key];
+			}
+			if (metadataLinkObj.opengraph[key]) {
+				finalizedMeta[key] = metadataLinkObj.opengraph[key];
+			}
+			if (metadataLinkObj.jsonLd[key]) {
+				finalizedMeta[key] = metadataLinkObj.jsonLd[key];
+			}
+		}
+	})
 };
 
 const jsonData = (DOMWindowObject) => {
@@ -280,6 +299,18 @@ const getLinkData = async (
 		// JSON LD
 		Object.assign(linkDataObj.jsonLd, jsonData(DOMWindowObject));
 		linkDataObj.jsonLd.title = linkDataObj.jsonLd.headline;
+		if (linkDataObj.jsonLd.keywords){
+			if (Array.isArray(linkDataObj.jsonLd.keywords)){
+				linkDataObj.topics = linkDataObj.jsonLd.keywords
+			} else {
+				linkDataObj.topics = [
+					...linkDataObj.jsonLd.keywords
+						.split(",")
+						.map((value) => value.trim()),
+			  	]
+			}
+
+		}
 		//console.log("linkDataObj");
 		//console.dir(linkDataObj, { depth: null });
 		Object.assign(

@@ -203,12 +203,15 @@ describe("The Link Request Module", function () {
 	});
 	describe("should create link objects from a domain requests", function () {
 		this.timeout(5000);
-		it("should resolve a basic URL", async function () {
-			const result = await linkModule.getLinkData({
+		let result = {};
+		before(async () => {
+			result = await linkModule.getLinkData({
 				sanitizedLink:
 					"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html",
 				link: "http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html",
 			});
+		});
+		it("should resolve a basic URL", async function () {
 			// console.log("LinkData ", result);
 			result.status.should.equal(200);
 			result.metadata.title.should.equal(
@@ -253,6 +256,19 @@ describe("The Link Request Module", function () {
 			);
 			expect(result.jsonLd.image).to.have.members([
 				"https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg",
+			]);
+		});
+		it("should sort metadata into a finalized form for archiving", async function () {
+			result.finalizedMeta.title.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+			result.finalizedMeta.creator.should.equal("Aram Zucker-Scharff");
+			result.finalizedMeta.description.should.equal(
+				"Here's how to make Jekyll posts easier for others to see and share on social networks."
+			);
+			expect(result.finalizedMeta.topics).to.have.members([
+				"jekyll",
+				"social-media",
 			]);
 		});
 	});

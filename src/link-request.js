@@ -1,61 +1,7 @@
-// Using suggestion from the docs - https://www.npmjs.com/package/node-fetch#loading-and-configuring-the-module
-
-const fetch = (...args) =>
-	import("node-fetch").then(({ default: fetch }) => fetch(...args));
-
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
-
+const fetchUrl = require("./fetch-tools");
 const { hasProvider, extract } = require("oembed-parser");
-
-const ua =
-	"facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)";
-
-const getRequestHeaders = () => {
-	return {
-		cookie: "",
-		"Accept-Language": "en-US,en;q=0.8",
-		"User-Agent": ua,
-	};
-};
-
-class HTTPResponseError extends Error {
-	constructor(response, ...args) {
-		super(
-			`HTTP Error Response: ${response.status} ${response.statusText}`,
-			...args
-		);
-		this.response = response;
-	}
-}
-
-const checkStatus = (response) => {
-	if (response.ok) {
-		// response.status >= 200 && response.status < 300
-		return response;
-	} else {
-		throw new HTTPResponseError(response);
-	}
-};
-
-const fetchUrl = async (url) => {
-	let response = false;
-	try {
-		response = await fetch(url, {
-			method: "get",
-			header: getRequestHeaders(),
-		});
-	} catch (e) {
-		if (e.hasOwnProperty("response")) {
-			console.error("Fetch Error in response", e.response.text());
-		} else if (e.code == "ENOTFOUND") {
-			console.error("URL Does Not Exist", e);
-		}
-		return false;
-	}
-	response = checkStatus(response);
-	return response;
-};
 
 const fetchOEmbed = async (url) => {
 	const oembedData = false;
@@ -347,5 +293,4 @@ module.exports = {
 	fetchOEmbed,
 	jsonData,
 	fetchUrl,
-	getRequestHeaders,
 };

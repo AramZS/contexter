@@ -18,6 +18,7 @@
   "homepage": "https://github.com/AramZS/contexter#readme",
   "dependencies": {
     "@braintree/sanitize-url": "^5.0.2",
+    "@mozilla/readability": "^0.4.1",
     "archive.is": "^0.0.2",
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",

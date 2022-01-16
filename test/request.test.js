@@ -200,6 +200,15 @@ describe("The Link Request Module", function () {
 				"How to make your Jekyll site show up on social"
 			);
 		});
+		it("should create a readability object from a URL's data", async function () {
+			const jsDom = new JSDOM(htmlPage);
+			const result = linkModule.readabilityData(jsDom.window);
+			result.title.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+			result.byline.should.equal("Aram Zucker-Scharff");
+			expect(result.content).to.have.lengthOf.above(100);
+		});
 	});
 	describe("should create link objects from a domain requests", function () {
 		this.timeout(5000);
@@ -257,6 +266,16 @@ describe("The Link Request Module", function () {
 			expect(result.jsonLd.image).to.have.members([
 				"https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg",
 			]);
+			expect(result.jsonLd.image).to.have.members([
+				"https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg",
+			]);
+			result.readabilityObject.title.should.equal(
+				"How to make your Jekyll site show up on social"
+			);
+			result.readabilityObject.byline.should.equal("Aram Zucker-Scharff");
+			expect(result.readabilityObject.content).to.have.lengthOf.above(
+				100
+			);
 		});
 		it("should sort metadata into a finalized form for archiving", async function () {
 			result.finalizedMeta.title.should.equal(

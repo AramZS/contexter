@@ -2,6 +2,7 @@ const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 const fetchUrl = require("./fetch-tools");
 const { hasProvider, extract } = require("oembed-parser");
+var { Readability } = require("@mozilla/readability");
 
 const fetchOEmbed = async (url) => {
 	const oembedData = false;
@@ -203,6 +204,12 @@ const jsonData = (DOMWindowObject) => {
 	return JSON.parse(jsonDataTag.textContent);
 };
 
+const readabilityData = (DOMWindowObject) => {
+	let reader = new Readability(DOMWindowObject.document);
+	let articleObj = reader.parse();
+	return articleObj;
+};
+
 const getLinkData = async (
 	linkObj = {
 		link: "",
@@ -228,6 +235,16 @@ const getLinkData = async (
 		sanitizedLink: linkObj.sanitizedLink,
 		htmlText: "",
 		oembed: false,
+		readabilityObject: {
+			title: false,
+			content: false,
+			textContent: false,
+			length: false,
+			excerpt: false,
+			byline: false,
+			dir: false,
+			siteName: false,
+		}, // https://github.com/mozilla/readability#parse
 		finalizedMeta: {},
 		jsonLd: {
 			"@type": false,
@@ -275,6 +292,11 @@ const getLinkData = async (
 		Object.assign(linkDataObj, processMetadata(DOMWindowObject));
 		// JSON LD
 		Object.assign(linkDataObj.jsonLd, jsonData(DOMWindowObject));
+		// Readability
+		Object.assign(
+			linkDataObj.readabilityObject,
+			readabilityData(DOMWindowObject)
+		);
 		//console.log("linkDataObj");
 		//console.dir(linkDataObj, { depth: null });
 		Object.assign(
@@ -292,5 +314,6 @@ module.exports = {
 	processMetadata,
 	fetchOEmbed,
 	jsonData,
+	readabilityData,
 	fetchUrl,
 };

@@ -10,7 +10,7 @@ const linkModule = require("../src/link-archiver");
 
 describe("The Link Archiver Module", function () {
 	describe("should archive a basic URL", function () {
-		this.timeout(30000);
+		this.timeout(60000);
 		it.skip("should send a URL to archive.is", async function () {
 			const result = await linkModule.pushToArchiveIs(
 				"https://blog.aramzs.me"

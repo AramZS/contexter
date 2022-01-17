@@ -19,7 +19,7 @@ const pushToWayback = async (url) => {
 	const saveUrl = `${archiveTool}${archivingPath}${url}`;
 	const response = await fetchUrl(saveUrl);
 
-	console.log("Archive Org Check", saveUrl, response);
+	// console.log("Archive Org Check", saveUrl, response);
 	return response;
 };
 

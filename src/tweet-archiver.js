@@ -26,7 +26,41 @@ const getTwitterClient = () => {
 const getTweetByUrl = async (url) => {
 	var tweetID = url.match(/(?<=status\/).*(?=\/|)/i)[0]; // "https://twitter.com/Chronotope/status/1275920609097199628";
 	console.log(tweetID);
-	var tweet = await getTwitterClient().tweets([`${tweetID}`]);
+	var tweet = await getTwitterClient().singleTweet(`${tweetID}`, {
+		expansions: [
+			"attachments.media_keys",
+			"author_id",
+			"entities.mentions.username",
+			"in_reply_to_user_id",
+			"referenced_tweets.id",
+			"referenced_tweets.id.author_id",
+		],
+		"media.fields": ["type", "url", "alt_text"],
+		"tweet.fields": [
+			"attachments",
+			"author_id",
+			"context_annotations",
+			"conversation_id", // 	The Tweet ID of the original Tweet of the conversation (which includes direct replies, replies of replies).
+			"created_at",
+			"entities",
+			"geo",
+			"id",
+			"in_reply_to_user_id",
+			"possibly_sensitive",
+			"referenced_tweets",
+			"reply_settings",
+			"source",
+			"text",
+		],
+		"user.fields": ["username", "id", "url"],
+	});
+	/** console.dir(tweet);
+	console.dir(tweet.data.referenced_tweets);
+	console.dir(tweet.data.entities.mentions);
+	console.dir(tweet.includes.users);
+	console.dir(tweet.includes.tweets[0]);
+	console.dir(tweet.includes.tweets[0].entities.urls);
+	console.dir(tweet.includes.tweets[0].entities.mentions); */
 	return tweet;
 };
 

@@ -28,15 +28,87 @@ describe("The Twitter Archive Module", function () {
 				"https://twitter.com/Chronotope/status/1275920609097199628"
 			);
 			expect(getTweet).to.deep.include({
-				data: [
-					{
-						id: "1275920609097199628",
-						text:
-							"@swodinsky Everything connected to " +
-							"the internet eventually becomes ads " +
-							":/",
+				data: {
+					text: "@swodinsky Everything connected to the internet eventually becomes ads :/",
+					referenced_tweets: [
+						{ type: "replied_to", id: "1275920325000278020" },
+					],
+					author_id: "15099054",
+					in_reply_to_user_id: "15099054",
+					id: "1275920609097199628",
+					entities: {
+						mentions: [
+							{
+								start: 0,
+								end: 10,
+								username: "swodinsky",
+								id: "2908572178",
+							},
+						],
 					},
-				],
+					possibly_sensitive: false,
+					conversation_id: "1275917959618232320",
+					reply_settings: "everyone",
+					created_at: "2020-06-24T22:35:53.000Z",
+					source: "Twitter Web App",
+				},
+				includes: {
+					users: [
+						{
+							username: "Chronotope",
+							name: "Aram Zucker-Scharff",
+							id: "15099054",
+							url: "https://t.co/2rHFiUBQX1",
+						},
+						{
+							username: "swodinsky",
+							name: "shoshana wodinsky (she/her)",
+							id: "2908572178",
+							url: "https://t.co/MYBP7NgPOL",
+						},
+					],
+					tweets: [
+						{
+							possibly_sensitive: false,
+							text: "@swodinsky I think that, unless something changes pretty radically at the regulatory level, that is a fair assumption.  https://t.co/aDY7rAbJYd",
+							id: "1275920325000278020",
+							source: "Twitter Web App",
+							author_id: "15099054",
+							in_reply_to_user_id: "2908572178",
+							reply_settings: "everyone",
+							created_at: "2020-06-24T22:34:45.000Z",
+							entities: {
+								urls: [
+									{
+										start: 120,
+										end: 143,
+										url: "https://t.co/aDY7rAbJYd",
+										expanded_url:
+											"https://twitter.com/Chronotope/status/1134464455872524288",
+										display_url:
+											"twitter.com/Chronotope/sta…",
+									},
+								],
+								mentions: [
+									{
+										start: 0,
+										end: 10,
+										username: "swodinsky",
+										id: "2908572178",
+									},
+								],
+							},
+							referenced_tweets: [
+								{ type: "quoted", id: "1134464455872524288" },
+								{
+									type: "replied_to",
+									id: "1275919838607794181",
+								},
+							],
+							conversation_id: "1275917959618232320",
+						},
+					],
+				},
 			});
 		});
 	});

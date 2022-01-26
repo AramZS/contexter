@@ -112,4 +112,20 @@ describe("The Twitter Archive Module", function () {
 			});
 		});
 	});
+	it("determine if the top tweet is in a thread", async function () {
+		const gotTweet = await linkModule.getTweetByUrl(
+			"https://twitter.com/Chronotope/status/1485620069229027329"
+		);
+		console.log("gotTweet", gotTweet);
+		const threadCheck = await linkModule.getTweetThread(gotTweet);
+		expect(threadCheck).to.have.length(6);
+	});
+	it("determine if the bottom tweet is in a thread", async function () {
+		const gotTweet = await linkModule.getTweetByUrl(
+			"https://twitter.com/Chronotope/status/1485621494365528072"
+		);
+		console.log("gotTweet", gotTweet);
+		const threadCheck = await linkModule.getTweetThread(gotTweet);
+		expect(threadCheck).to.have.length(6);
+	});
 });

@@ -122,10 +122,13 @@ describe("The Twitter Archive Module", function () {
 	});
 	it("determine if the bottom tweet is in a thread", async function () {
 		const gotTweet = await linkModule.getTweetByUrl(
-			"https://twitter.com/Chronotope/status/1485621494365528072"
+			"https://twitter.com/Chronotope/status/1485625441230770181"
 		);
 		console.log("gotTweet", gotTweet);
 		const threadCheck = await linkModule.getTweetThread(gotTweet);
 		expect(threadCheck).to.have.length(6);
+		threadCheck[0].data.text.should.equal(
+			"This is fkin nonsense. Once again: every other browser has already done this. Get rid of the third party cookie. Trying to sue Google to stop this is confused nonsense. https://t.co/UTK0OfeMxg"
+		);
 	});
 });

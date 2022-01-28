@@ -104,6 +104,7 @@ const getRepliedTo = (tweetData) => {
 		tweetData.referenced_tweets.length &&
 		tweetData.referenced_tweets[0].type == "replied_to"
 	) {
+		console.log("referenced_tweet 0", tweetData.referenced_tweets[0].id);
 		return tweetData.referenced_tweets[0].id;
 	} else {
 		return false;
@@ -128,7 +129,7 @@ const getTweetThread = async (tweetObj = defaultTweetObj) => {
 	let threadCheck = false;
 	let threadFirstCheck = false;
 	let conversation = false;
-	const promises = [];
+	// const promises = [];
 	const tweetData = tweetObj.data;
 	const tweetIncludes = tweetObj.includes;
 	if (tweetData.in_reply_to_user_id) {
@@ -158,21 +159,25 @@ const getTweetThread = async (tweetObj = defaultTweetObj) => {
 	} else {
 		console.dir(tweetData);
 		conversation = [tweetObj];
-
 		let nextTweet = true;
-		while (nextTweet) {
+		while (nextTweet != false) {
+			console.log("nextTweet", nextTweet);
 			if (nextTweet === true) {
 				nextTweet = getRepliedTo(tweetData);
+				console.log("nextTweet true", nextTweet);
 			}
 			var tweet = await getTwitterClient().singleTweet(
 				`${nextTweet}`,
 				tweetFields
 			);
+			// promises.push(tweet);
+			console.log("tweet true", tweet);
 			conversation.push(tweet);
 			nextTweet = getRepliedTo(tweet.data);
 		}
+		// await Promise.all(promises);
+		return conversation.reverse();
 	}
-	return conversation;
 };
 
 module.exports = {

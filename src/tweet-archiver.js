@@ -98,14 +98,20 @@ const getTwitterClient = () => {
 };
 
 const getRepliedTo = (tweetData) => {
-	if (
-		tweetData.referenced_tweets &&
-		tweetData.referenced_tweets &&
-		tweetData.referenced_tweets.length &&
-		tweetData.referenced_tweets[0].type == "replied_to"
-	) {
-		console.log("referenced_tweet 0", tweetData.referenced_tweets[0].id);
-		return tweetData.referenced_tweets[0].id;
+	if (tweetData.referenced_tweets && tweetData.referenced_tweets.length) {
+		const repliedTo = tweetData.referenced_tweets.find((tweet) => {
+			if (tweet.type == "replied_to") {
+				return true;
+			} else {
+				return false;
+			}
+		});
+		if (repliedTo) {
+			console.log("referenced_tweet 0", repliedTo.id);
+			return repliedTo.id;
+		} else {
+			return false;
+		}
 	} else {
 		return false;
 	}
@@ -125,40 +131,50 @@ const getTweetByUrl = async (url) => {
 	return tweet;
 };
 
+const getTweetConversation = async (conversation_id) => {};
+
 const getTweetThread = async (tweetObj = defaultTweetObj) => {
 	let threadCheck = false;
 	let threadFirstCheck = false;
 	let conversation = false;
 	// const promises = [];
-	const tweetData = tweetObj.data;
-	const tweetIncludes = tweetObj.includes;
+	const tweetData = tweetObj.data ? tweetObj.data : tweetObj;
+	const tweetIncludes = tweetObj.includes ? tweetObj.includes : false;
+	let userName = "";
+	if (tweetIncludes == false) {
+		const userNameObj = await getTwitterClient().user(tweetData.author_id);
+		userName = userNameObj.data.username;
+	} else {
+		userName = tweetIncludes.users[0].username;
+	}
 	if (tweetData.in_reply_to_user_id) {
 		threadFirstCheck = true;
 	}
 	if (
-		Array.isArray(tweetIncludes.users) &&
-		tweetIncludes.users.length > 0 &&
-		tweetIncludes.users[0].users &&
-		tweetData.in_reply_to_user_id &&
-		tweetData.conversation_id != tweetData.id
+		(tweetIncludes &&
+			Array.isArray(tweetIncludes.users) &&
+			tweetIncludes.users.length > 0 &&
+			tweetIncludes.users[0].users) ||
+		(tweetData.in_reply_to_user_id &&
+			tweetData.conversation_id != tweetData.id)
 	) {
 		threadFirstCheck = true;
 	}
 	if (!threadFirstCheck) {
 		conversation = await getTwitterClient().search(
-			`conversation_id:${tweetData.conversation_id} to:${tweetIncludes.users[0].username} from:${tweetIncludes.users[0].username}`,
+			`conversation_id:${tweetData.conversation_id} to:${userName} from:${userName}`,
 			tweetFields
 		);
 		const fullConversation = conversation._realData.data;
 		if (conversation._realData.data.length < 1) {
 			return false;
 		}
-		fullConversation.push(tweetObj);
+		fullConversation.push(tweetData);
 		console.dir(fullConversation);
 		return fullConversation.reverse();
 	} else {
 		console.dir(tweetData);
-		conversation = [tweetObj];
+		conversation = [tweetData];
 		let nextTweet = true;
 		while (nextTweet != false) {
 			console.log("nextTweet", nextTweet);
@@ -172,7 +188,8 @@ const getTweetThread = async (tweetObj = defaultTweetObj) => {
 			);
 			// promises.push(tweet);
 			console.log("tweet true", tweet);
-			conversation.push(tweet);
+			console.dir(tweet.data.referenced_tweets);
+			conversation.push(tweet.data);
 			nextTweet = getRepliedTo(tweet.data);
 		}
 		// await Promise.all(promises);
@@ -180,8 +197,68 @@ const getTweetThread = async (tweetObj = defaultTweetObj) => {
 	}
 };
 
+// Looking for: { type: 'quoted', id: '1134464455872524288' },
+const getQuotedTweetId = (tweetData = defaultTweetObj.data) => {
+	// const referencedTweets = tweetObj.data.includes.tweets.referenced_tweets;
+	if (tweetData.referenced_tweets && tweetData.referenced_tweets.length) {
+		const repliedTo = tweetData.referenced_tweets.find((tweet) => {
+			if (tweet.type == "quoted") {
+				return true;
+			} else {
+				return false;
+			}
+		});
+		if (repliedTo) {
+			console.log("quoted 0", repliedTo.id);
+			return repliedTo.id;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+};
+
+const getQuotedTweet = async (tweetObj = defaultTweetObj) => {
+	const tweetId = getQuotedTweetId(tweetObj.data);
+	let tweets = {
+		originTweet: tweetObj,
+		quotedTweet: false, //tweet,
+		quotedThread: false, //threadOfTweets,
+		quotedConversation: false,
+	};
+	if (tweetId === false) {
+		return tweets;
+	}
+	var tweet = await getTwitterClient().singleTweet(`${tweetId}`, tweetFields);
+	tweets.quotedTweet = tweet;
+	var threadOfTweets = await getTweetThread(tweet);
+	if (false != threadOfTweets) {
+		tweets.quotedThread = threadOfTweets;
+		var conversationOfTweets = await getTweetThread(threadOfTweets[0]);
+		if (conversationOfTweets) {
+			console.log(
+				"conversation",
+				threadOfTweets[threadOfTweets.length - 1]
+			);
+			if (
+				conversationOfTweets.length != threadOfTweets.length ||
+				threadOfTweets[threadOfTweets.length - 1].text !=
+					conversationOfTweets[conversationOfTweets.length - 1].text
+			) {
+				tweets.quotedConversation = conversationOfTweets;
+			}
+		}
+		return tweets;
+	} else {
+		return tweets;
+	}
+};
+
 module.exports = {
 	getTwitterClient,
 	getTweetByUrl,
 	getTweetThread,
+	getQuotedTweetId,
+	getQuotedTweet,
 };

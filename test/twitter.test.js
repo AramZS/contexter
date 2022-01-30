@@ -234,7 +234,7 @@ describe("The Twitter Archive Module", function () {
 				gotTweet.includes.media[0]
 			);
 		});
-		it.only("should get a gif media from a Tweet", async function () {
+		it.skip("should get a gif media from a Tweet", async function () {
 			const gotTweet = await linkModule.getTweetByUrl(
 				"https://twitter.com/Chronotope/status/1486814045038649346"
 			);
@@ -252,7 +252,7 @@ describe("The Twitter Archive Module", function () {
 				gotTweet.includes.media[0]
 			);
 		});
-		it("should get image media from a Tweet search", async function () {
+		it.skip("should get image media from a Tweet search", async function () {
 			const searchResult = await linkModule
 				.getTwitterClient()
 				.search(
@@ -280,6 +280,54 @@ describe("The Twitter Archive Module", function () {
 					url: "https://pbs.twimg.com/media/FJ-VQ4sWYAge5FS.jpg",
 				}
 			);
+		});
+	});
+	describe("Capture twitter metadata", function () {
+		this.timeout(60000);
+		it("should capture take a tweet and get the links within", async function () {
+			const getTweet = await linkModule.getTweetByUrl(
+				"https://twitter.com/Chronotope/status/1487451928309207047"
+			);
+			expect(getTweet.data.text).to.equal(
+				"Hmmm not sure I would want a mortgage from a company also encouraging me to gamble. https://t.co/S9tVJpjeZo"
+			);
+			console.dir(getTweet.data.entities);
+			const linkSetOne = await linkModule.getLinkFromTweet(getTweet.data);
+			expect(linkSetOne).to.have.length(0);
+
+			const getTweetTwo = await linkModule.getTweetByUrl(
+				"https://twitter.com/Chronotope/status/1487790307462762498"
+			);
+			console.dir(getTweetTwo.data.entities);
+			expect(getTweetTwo.data.text).to.equal(
+				`"It also looks like misinformation and hate speech, which are the very problems that Facebook has had a hand in disseminating, and then swiftly washed its hands off of, will also likely become a hallmark of Horizon Worlds." https://t.co/csLhSgsVy4`
+			);
+			const linkSetTwo = await linkModule.getLinkFromTweet(
+				getTweetTwo.data
+			);
+			console.dir(linkSetTwo);
+			expect(linkSetTwo).to.have.length(1);
+			expect(linkSetTwo[0]).to.equal(
+				"https://www.thegamer.com/facebooks-horizon-worlds-broken-metaverse-unimaginative-games/"
+			);
+
+			const getTweetThree = await linkModule.getTweetByUrl(
+				"https://twitter.com/Chronotope/status/1486814045038649346"
+			);
+			const linkSetThree = await linkModule.getLinkFromTweet(
+				getTweetThree.data
+			);
+			console.dir(linkSetThree);
+			expect(linkSetThree).to.have.length(0);
+
+			const getTweetFour = await linkModule.getTweetByUrl(
+				"https://twitter.com/keano81/status/1485582987949449220"
+			);
+			const linkSetFour = await linkModule.getLinkFromTweet(
+				getTweetFour.data
+			);
+			console.dir(linkSetFour);
+			expect(linkSetFour).to.have.length(0);
 		});
 	});
 });

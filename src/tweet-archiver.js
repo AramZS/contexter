@@ -211,8 +211,12 @@ const getTweetThread = async (tweetObj = defaultTweetObj) => {
 		}
 		const fullConversation = conversation._realData.data;
 		fullConversation.push(tweetData);
-		console.dir(fullConversation);
-		return fullConversation.reverse();
+		const enrichedTweets = enrichTweetsWithMedia(
+			conversation.tweets,
+			conversation.includes
+		);
+		console.dir(enrichedTweets);
+		return enrichedTweets.reverse();
 	} else {
 		console.dir(tweetData);
 		conversation = [tweetData];
@@ -230,8 +234,12 @@ const getTweetThread = async (tweetObj = defaultTweetObj) => {
 			// promises.push(tweet);
 			console.log("tweet true", tweet);
 			console.dir(tweet.data.referenced_tweets);
-			conversation.push(tweet.data);
-			nextTweet = getRepliedTo(tweet.data);
+			const enrichedTweet = enrichTweetWithMedia(
+				tweet.data,
+				tweet.includes
+			);
+			conversation.push(enrichedTweet);
+			nextTweet = getRepliedTo(enrichedTweet);
 		}
 		// await Promise.all(promises);
 		return conversation.reverse();
@@ -296,6 +304,30 @@ const getQuotedTweet = async (tweetObj = defaultTweetObj) => {
 	}
 };
 
+const getLinkFromTweet = (tweetData) => {
+	let urlSet = [];
+	if (tweetData.entities && tweetData.entities.urls) {
+		urlSet = tweetData.entities.urls.flatMap((urlEntity) => {
+			if (urlEntity.display_url) {
+				if (/^pic\.twitter/.test(urlEntity.display_url)) {
+					return [];
+				}
+			}
+			if (urlEntity.expanded_url) {
+				if (/^https:\/\/twitter\.com/.test(urlEntity.expanded_url)) {
+					return [];
+				}
+			}
+			if (urlEntity.expanded_url) {
+				return [urlEntity.expanded_url];
+			} else if (urlEntity.url) {
+				return [urlEntity.url];
+			}
+		});
+	}
+	return urlSet;
+};
+
 module.exports = {
 	getTwitterClient,
 	getTweetByUrl,
@@ -304,4 +336,5 @@ module.exports = {
 	getQuotedTweet,
 	enrichTweetWithMedia,
 	enrichTweetsWithMedia,
+	getLinkFromTweet,
 };

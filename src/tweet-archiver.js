@@ -161,14 +161,25 @@ const getTweetThread = async (tweetObj = defaultTweetObj) => {
 		threadFirstCheck = true;
 	}
 	if (!threadFirstCheck) {
+		console.log(
+			"Query: ",
+			`conversation_id:${tweetData.conversation_id} to:${userName} from:${userName}`
+		);
 		conversation = await getTwitterClient().search(
 			`conversation_id:${tweetData.conversation_id} to:${userName} from:${userName}`,
 			tweetFields
 		);
-		const fullConversation = conversation._realData.data;
-		if (conversation._realData.data.length < 1) {
+		console.log("conversation check");
+		console.dir(conversation);
+		if (
+			!conversation ||
+			!conversation._realData ||
+			!conversation._realData.data ||
+			conversation._realData.data.length < 1
+		) {
 			return false;
 		}
+		const fullConversation = conversation._realData.data;
 		fullConversation.push(tweetData);
 		console.dir(fullConversation);
 		return fullConversation.reverse();

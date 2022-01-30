@@ -124,52 +124,87 @@ describe("The Twitter Archive Module", function () {
 			});
 		});
 	});
-	it("determine if the top tweet is in a thread", async function () {
-		const gotTweet = await linkModule.getTweetByUrl(
-			"https://twitter.com/Chronotope/status/1485620069229027329"
-		);
-		console.log("gotTweet", gotTweet);
-		const threadCheck = await linkModule.getTweetThread(gotTweet);
-		expect(threadCheck).to.have.length(6);
+	describe("Capture a tweet thread", function () {
+		this.timeout(60000);
+		it("determine if the top tweet is in a thread", async function () {
+			const gotTweet = await linkModule.getTweetByUrl(
+				"https://twitter.com/Chronotope/status/1485620069229027329"
+			);
+			console.log("gotTweet", gotTweet);
+			const threadCheck = await linkModule.getTweetThread(gotTweet);
+			expect(threadCheck).to.have.length(6);
+		});
+		it("determine if the bottom tweet is in a thread", async function () {
+			const gotTweet = await linkModule.getTweetByUrl(
+				"https://twitter.com/Chronotope/status/1485625441230770181"
+			);
+			console.log("gotTweet", gotTweet);
+			const threadCheck = await linkModule.getTweetThread(gotTweet);
+			expect(threadCheck).to.have.length(6);
+			threadCheck[0].text.should.equal(
+				"This is fkin nonsense. Once again: every other browser has already done this. Get rid of the third party cookie. Trying to sue Google to stop this is confused nonsense. https://t.co/UTK0OfeMxg"
+			);
+		});
+		it("determine if the bottom tweet is in a multi-user thread", async function () {
+			const gotTweet = await linkModule.getTweetByUrl(
+				"https://twitter.com/Chronotope/status/1275920609097199628"
+			);
+			console.log("gotTweet", gotTweet);
+			const threadCheck = await linkModule.getTweetThread(gotTweet);
+			expect(threadCheck).to.have.length(8);
+			threadCheck[0].text.should.equal(
+				`ever since the protests began, i\'ve been thinking a lot about location data: why do so many apps want it? why is it so valuable? \n\ntoday i finally stumbled onto the answer in some 2016 dev doc: turns out location isn\'t just lat/long—it\'s income, interests, political leanings, etc https://t.co/W9I7c824bZ`
+			);
+		});
 	});
-	it("determine if the bottom tweet is in a thread", async function () {
-		const gotTweet = await linkModule.getTweetByUrl(
-			"https://twitter.com/Chronotope/status/1485625441230770181"
-		);
-		console.log("gotTweet", gotTweet);
-		const threadCheck = await linkModule.getTweetThread(gotTweet);
-		expect(threadCheck).to.have.length(6);
-		threadCheck[0].text.should.equal(
-			"This is fkin nonsense. Once again: every other browser has already done this. Get rid of the third party cookie. Trying to sue Google to stop this is confused nonsense. https://t.co/UTK0OfeMxg"
-		);
-	});
-	it("determine if the bottom tweet is in a multi-user thread", async function () {
-		const gotTweet = await linkModule.getTweetByUrl(
-			"https://twitter.com/Chronotope/status/1275920609097199628"
-		);
-		console.log("gotTweet", gotTweet);
-		const threadCheck = await linkModule.getTweetThread(gotTweet);
-		expect(threadCheck).to.have.length(8);
-		threadCheck[0].text.should.equal(
-			`ever since the protests began, i\'ve been thinking a lot about location data: why do so many apps want it? why is it so valuable? \n\ntoday i finally stumbled onto the answer in some 2016 dev doc: turns out location isn\'t just lat/long—it\'s income, interests, political leanings, etc https://t.co/W9I7c824bZ`
-		);
-	});
-	it("should get a quoted tweet id", async function () {
-		const gotTweet = await linkModule.getTweetByUrl(
-			"https://twitter.com/Chronotope/status/1485620069229027329"
-		);
-		console.log("gotTweet", gotTweet);
-		const quotedId = await linkModule.getQuotedTweetId(gotTweet.data);
-		quotedId.should.equal(`1485494070562549760`);
-	});
-	it.skip("should get a quoted tweet thread", async function () {
-		const gotTweet = await linkModule.getTweetByUrl(
-			"https://twitter.com/Chronotope/status/1485620069229027329"
-		);
-		console.log("gotTweet", gotTweet);
-		const threadCheck = await linkModule.getQuotedTweet(gotTweet);
-		threadCheck.quotedThread[0].data.text.should.equal(
-			`FT: Google is facing a fresh complaint from Germany’s largest publishers and advertisers, which are demanding that the EU intervene over the search giant’s plan to stop the use of third-party cookies.\nhttps://t.co/FKUhvsh4Vo https://t.co/OiHMyKg5Q4`
-		);
+	describe("Capture a quoted tweets and quoted thread", function () {
+		this.timeout(60000);
+		it("should get a quoted tweet id", async function () {
+			const gotTweet = await linkModule.getTweetByUrl(
+				"https://twitter.com/Chronotope/status/1485620069229027329"
+			);
+			console.log("gotTweet", gotTweet);
+			const quotedId = await linkModule.getQuotedTweetId(gotTweet.data);
+			quotedId.should.equal(`1485494070562549760`);
+		});
+		it("should get a quoted tweet thread", async function () {
+			const gotTweet = await linkModule.getTweetByUrl(
+				"https://twitter.com/Chronotope/status/1485620069229027329"
+			);
+			console.log("gotTweet", gotTweet);
+			const threadCheck = await linkModule.getQuotedTweet(gotTweet);
+			threadCheck.quotedThread[0].text.should.equal(
+				`FT: Google is facing a fresh complaint from Germany’s largest publishers and advertisers, which are demanding that the EU intervene over the search giant’s plan to stop the use of third-party cookies.\nhttps://t.co/FKUhvsh4Vo https://t.co/OiHMyKg5Q4`
+			);
+			threadCheck.quotedThread[
+				threadCheck.quotedThread.length - 1
+			].text.should.equal(
+				`Brussels has already opened an informal inquiry into the search giant’s position in the online market, where it acts as the dominant middleman between advertisers and publishers. This is part of a wider investigation into the way Google collects data that started in 2019.`
+			);
+		});
+		it.only("should get a quoted tweet thread's full conversation", async function () {
+			const gotTweet = await linkModule.getTweetByUrl(
+				"https://twitter.com/Chronotope/status/1375079084485709825"
+			);
+			console.log("gotTweet", gotTweet);
+			const threadCheck = await linkModule.getQuotedTweet(gotTweet);
+			threadCheck.quotedThread[0].text.should.equal(
+				`Medium will fail to on-board &amp; keep pubs from now until eternity for a simple reason: as a VC funded startup it values hype more than profit`
+			);
+			console.log(
+				"quotedConversation",
+				threadCheck.quotedConversation,
+				threadCheck
+			);
+			threadCheck.quotedConversation.should.not.equal(false);
+			threadCheck.quotedThread.length.should.not.equal(
+				threadCheck.quotedConversation.length
+			);
+			threadCheck.quotedConversation[
+				threadCheck.quotedConversation.length - 1
+			].text.should.equal(
+				`Being on Medium was, is, and will always be, bad for publishers. End of Story.`
+			);
+		});
 	});
 });

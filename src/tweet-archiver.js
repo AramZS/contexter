@@ -133,6 +133,35 @@ const getTweetByUrl = async (url) => {
 
 const getTweetConversation = async (conversation_id) => {};
 
+const enrichTweetWithMedia = (aTweet, tweetsInclude) => {
+	if (
+		aTweet.hasOwnProperty("attachments") &&
+		aTweet.attachments.hasOwnProperty("media_keys") &&
+		aTweet.attachments.media_keys.length > 0
+	) {
+		aTweet.attachments.media_keys = aTweet.attachments.media_keys.map(
+			(media) => {
+				console.log("enrich tweet");
+				console.dir(media);
+				const found = tweetsInclude.media.find((mediaObj) => {
+					console.dir(mediaObj);
+					return mediaObj.media_key == media;
+				});
+				console.log("found media tweet");
+				console.dir(found);
+				return found;
+			}
+		);
+	}
+	return aTweet;
+};
+
+const enrichTweetsWithMedia = (tweets, tweetsInclude) => {
+	return tweets.map((aTweet) => {
+		return enrichTweetWithMedia(aTweet, tweetsInclude);
+	});
+};
+
 const getTweetThread = async (tweetObj = defaultTweetObj) => {
 	let threadCheck = false;
 	let threadFirstCheck = false;
@@ -165,6 +194,7 @@ const getTweetThread = async (tweetObj = defaultTweetObj) => {
 			"Query: ",
 			`conversation_id:${tweetData.conversation_id} to:${userName} from:${userName}`
 		);
+		// Alternate way to handle this - https://developer.twitter.com/en/docs/twitter-api/conversation-id
 		conversation = await getTwitterClient().search(
 			`conversation_id:${tweetData.conversation_id} to:${userName} from:${userName}`,
 			tweetFields
@@ -272,4 +302,6 @@ module.exports = {
 	getTweetThread,
 	getQuotedTweetId,
 	getQuotedTweet,
+	enrichTweetWithMedia,
+	enrichTweetsWithMedia,
 };

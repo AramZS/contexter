@@ -199,4 +199,87 @@ describe("The Twitter Archive Module", function () {
 			threadCheck.quotedConversation.should.equal(false);
 		});
 	});
+	describe("Capture twitter media", function () {
+		this.timeout(60000);
+		it("should capture a basic tweet with an image link", async function () {
+			const getUser = await linkModule
+				.getTwitterClient()
+				.singleTweet("1487451928309207047");
+			expect(getUser.data.text).to.equal(
+				"Hmmm not sure I would want a mortgage from a company also encouraging me to gamble. https://t.co/S9tVJpjeZo"
+			);
+		});
+		it("should get image media from a Tweet", async function () {
+			const gotTweet = await linkModule.getTweetByUrl(
+				"https://twitter.com/Chronotope/status/1487451928309207047"
+			);
+			console.log("gotTweet", gotTweet);
+			console.dir(gotTweet.data.attachments);
+			console.dir(gotTweet.data.entities);
+			console.dir(gotTweet.includes.media);
+			expect(gotTweet.data.attachments).to.deep.include({
+				media_keys: ["3_1487451926233030667"],
+			});
+			expect(gotTweet.includes.media[0]).to.deep.include({
+				media_key: "3_1487451926233030667",
+				type: "photo",
+				url: "https://pbs.twimg.com/media/FKR9pWOXIAsI9UY.jpg",
+			});
+			const enrichedTweet = linkModule.enrichTweetWithMedia(
+				gotTweet.data,
+				gotTweet.includes
+			);
+			console.dir(enrichedTweet);
+			expect(enrichedTweet.attachments.media_keys[0]).to.deep.include(
+				gotTweet.includes.media[0]
+			);
+		});
+		it.only("should get a gif media from a Tweet", async function () {
+			const gotTweet = await linkModule.getTweetByUrl(
+				"https://twitter.com/Chronotope/status/1486814045038649346"
+			);
+			console.log("gotTweet", gotTweet);
+			console.dir(gotTweet.data.attachments);
+			console.dir(gotTweet.data.entities);
+			console.dir(gotTweet.includes.media);
+			const enrichedTweet = linkModule.enrichTweetWithMedia(
+				gotTweet.data,
+				gotTweet.includes
+			);
+			console.dir(enrichedTweet);
+			console.dir(enrichedTweet.attachments.media_keys);
+			expect(enrichedTweet.attachments.media_keys[0]).to.deep.include(
+				gotTweet.includes.media[0]
+			);
+		});
+		it("should get image media from a Tweet search", async function () {
+			const searchResult = await linkModule
+				.getTwitterClient()
+				.search(
+					`conversation_id:1486067586118950918 from:Chronotope to:Chronotope`,
+					{
+						expansions: ["attachments.media_keys"],
+						"media.fields": ["type", "url", "alt_text"],
+					}
+				);
+			console.log("Search Result: ");
+			console.dir(searchResult);
+			console.log("Search Result includes: ");
+			console.dir(searchResult.includes.media);
+			console.log("Search Result tweets: ");
+			console.dir(searchResult.tweets[7]);
+			const enrichedTweets = linkModule.enrichTweetsWithMedia(
+				searchResult.tweets,
+				searchResult.includes
+			);
+			console.dir(enrichedTweets[7]);
+			expect(enrichedTweets[7].attachments.media_keys[0]).to.deep.include(
+				{
+					media_key: "3_1486070519384399880",
+					type: "photo",
+					url: "https://pbs.twimg.com/media/FJ-VQ4sWYAge5FS.jpg",
+				}
+			);
+		});
+	});
 });

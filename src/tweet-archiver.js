@@ -268,10 +268,10 @@ const getQuotedTweetId = (tweetData = defaultTweetObj.data) => {
 	}
 };
 
-const getQuotedTweet = async (tweetObj = defaultTweetObj) => {
-	const tweetId = getQuotedTweetId(tweetObj.data);
+const getQuotedTweet = async (tweetData = defaultTweetObj.data) => {
+	const tweetId = getQuotedTweetId(tweetData);
 	let tweets = {
-		originTweet: tweetObj,
+		originTweet: tweetData,
 		quotedTweet: false, //tweet,
 		quotedThread: false, //threadOfTweets,
 		quotedConversation: false,
@@ -304,7 +304,7 @@ const getQuotedTweet = async (tweetObj = defaultTweetObj) => {
 	}
 };
 
-const getLinkFromTweet = (tweetData) => {
+const getLinksFromTweet = (tweetData = defaultTweetObj.data) => {
 	let urlSet = [];
 	if (tweetData.entities && tweetData.entities.urls) {
 		urlSet = tweetData.entities.urls.flatMap((urlEntity) => {
@@ -318,7 +318,9 @@ const getLinkFromTweet = (tweetData) => {
 					return [];
 				}
 			}
-			if (urlEntity.expanded_url) {
+			if (urlEntity.unwound_url) {
+				return [urlEntity.unwound_url];
+			} else if (urlEntity.expanded_url) {
 				return [urlEntity.expanded_url];
 			} else if (urlEntity.url) {
 				return [urlEntity.url];
@@ -326,6 +328,77 @@ const getLinkFromTweet = (tweetData) => {
 		});
 	}
 	return urlSet;
+};
+
+const getTwitterLinkData = (tweetData = defaultTweetObj.data) => {
+	let urlSet = [];
+	if (tweetData.entities && tweetData.entities.urls) {
+		urlSet = tweetData.entities.urls.flatMap((urlEntity) => {
+			if (urlEntity.display_url) {
+				if (/^pic\.twitter/.test(urlEntity.display_url)) {
+					return [];
+				}
+			}
+			if (urlEntity.expanded_url) {
+				if (/^https:\/\/twitter\.com/.test(urlEntity.expanded_url)) {
+					return [];
+				}
+			}
+			if (
+				urlEntity.unwound_url ||
+				urlEntity.expanded_url ||
+				urlEntity.url
+			) {
+				/**
+				 * Twitter URL Data Object
+				 *
+				 * {
+					start: 224,
+					end: 247,
+					url: 'https://t.co/csLhSgsVy4',
+					expanded_url: 'https://www.thegamer.com/facebooks-horizon-worlds-broken-metaverse-unimaginative-games/',
+					display_url: 'thegamer.com/facebooks-hori…',
+					images: [Array],
+					status: 200,
+					title: 'Facebook’s Horizon Worlds Is A Broken Metaverse Filled With Unimaginative Games',
+					description: "For now, Mark Zuckerberg's virtual paradise looks like an underbaked digital space instead of Ready Player One",
+					unwound_url: 'https://www.thegamer.com/facebooks-horizon-worlds-broken-metaverse-unimaginative-games/'
+				 * }
+				 *
+				 */
+				return urlEntity;
+			}
+		});
+	}
+	return urlSet;
+};
+
+const getTweets = async (url) => {
+	const tweet = await getTweetByUrl(url);
+	let thread = await getTweetThread(tweet.data);
+	if (!thread) {
+		thread = [tweet.data];
+	}
+	let quotedDataPromises = thread.map(async (tweetData) => {
+		const quotedDataInternal = await getQuotedTweet(tweetData);
+		return quotedDataInternal;
+	});
+	const quotedDataArray = await Promise.all(quotedDataPromises);
+	let enrichedThread = thread.map(async (tweetData, i) => {
+		const quotedData = quotedDataArray[i];
+		return {
+			tweetData,
+			tweetText: tweetData.text,
+			tweetLinks: getLinksFromTweet(tweetData),
+			tweetLinkData: getTwitterLinkData(tweetData),
+			quotedTweet: quotedData.quotedTweet.hasOwnProperty("data")
+				? quotedData.quotedTweet.data
+				: quotedData.quotedTweet,
+			quotedTweetData: quotedData,
+		};
+	});
+	const completedEnrichedThread = await Promise.all(enrichedThread);
+	return completedEnrichedThread;
 };
 
 module.exports = {
@@ -336,5 +409,7 @@ module.exports = {
 	getQuotedTweet,
 	enrichTweetWithMedia,
 	enrichTweetsWithMedia,
-	getLinkFromTweet,
+	getLinksFromTweet,
+	getTwitterLinkData,
+	getTweets,
 };

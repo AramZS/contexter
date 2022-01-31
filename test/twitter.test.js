@@ -172,7 +172,7 @@ describe("The Twitter Archive Module", function () {
 				"https://twitter.com/Chronotope/status/1485620069229027329"
 			);
 			console.log("gotTweet", gotTweet);
-			const threadCheck = await linkModule.getQuotedTweet(gotTweet);
+			const threadCheck = await linkModule.getQuotedTweet(gotTweet.data);
 			threadCheck.quotedThread[0].text.should.equal(
 				`FT: Google is facing a fresh complaint from Germany’s largest publishers and advertisers, which are demanding that the EU intervene over the search giant’s plan to stop the use of third-party cookies.\nhttps://t.co/FKUhvsh4Vo https://t.co/OiHMyKg5Q4`
 			);
@@ -187,7 +187,7 @@ describe("The Twitter Archive Module", function () {
 				"https://twitter.com/Chronotope/status/1375079084485709825"
 			);
 			console.log("gotTweet", gotTweet);
-			const threadCheck = await linkModule.getQuotedTweet(gotTweet);
+			const threadCheck = await linkModule.getQuotedTweet(gotTweet.data);
 			threadCheck.quotedThread[0].text.should.equal(
 				`Medium will fail to on-board &amp; keep pubs from now until eternity for a simple reason: as a VC funded startup it values hype more than profit`
 			);
@@ -292,7 +292,9 @@ describe("The Twitter Archive Module", function () {
 				"Hmmm not sure I would want a mortgage from a company also encouraging me to gamble. https://t.co/S9tVJpjeZo"
 			);
 			console.dir(getTweet.data.entities);
-			const linkSetOne = await linkModule.getLinkFromTweet(getTweet.data);
+			const linkSetOne = await linkModule.getLinksFromTweet(
+				getTweet.data
+			);
 			expect(linkSetOne).to.have.length(0);
 
 			const getTweetTwo = await linkModule.getTweetByUrl(
@@ -302,7 +304,7 @@ describe("The Twitter Archive Module", function () {
 			expect(getTweetTwo.data.text).to.equal(
 				`"It also looks like misinformation and hate speech, which are the very problems that Facebook has had a hand in disseminating, and then swiftly washed its hands off of, will also likely become a hallmark of Horizon Worlds." https://t.co/csLhSgsVy4`
 			);
-			const linkSetTwo = await linkModule.getLinkFromTweet(
+			const linkSetTwo = await linkModule.getLinksFromTweet(
 				getTweetTwo.data
 			);
 			console.dir(linkSetTwo);
@@ -314,20 +316,89 @@ describe("The Twitter Archive Module", function () {
 			const getTweetThree = await linkModule.getTweetByUrl(
 				"https://twitter.com/Chronotope/status/1486814045038649346"
 			);
-			const linkSetThree = await linkModule.getLinkFromTweet(
+			const linkSetThree = await linkModule.getLinksFromTweet(
 				getTweetThree.data
 			);
-			console.dir(linkSetThree);
 			expect(linkSetThree).to.have.length(0);
 
 			const getTweetFour = await linkModule.getTweetByUrl(
 				"https://twitter.com/keano81/status/1485582987949449220"
 			);
-			const linkSetFour = await linkModule.getLinkFromTweet(
+			const linkSetFour = await linkModule.getLinksFromTweet(
 				getTweetFour.data
 			);
-			console.dir(linkSetFour);
 			expect(linkSetFour).to.have.length(0);
+		});
+	});
+	describe("Capture the data about a Tweet needed to embed and archive it", function () {
+		this.timeout(60000);
+		it("should capture and enrich a single tweet", async function () {
+			const gotTweets = await linkModule.getTweets(
+				"https://twitter.com/Chronotope/status/1487790307462762498"
+			);
+			expect(gotTweets).to.have.length(1);
+			console.log("Captured Data");
+			console.dir(gotTweets[0]);
+			gotTweets[0].tweetText.should.equal(
+				`"It also looks like misinformation and hate speech, which are the very problems that Facebook has had a hand in disseminating, and then swiftly washed its hands off of, will also likely become a hallmark of Horizon Worlds." https://t.co/csLhSgsVy4`
+			);
+			expect(gotTweets[0].tweetLinks).to.have.length(1);
+			gotTweets[0].tweetLinks[0].should.equal(
+				"https://www.thegamer.com/facebooks-horizon-worlds-broken-metaverse-unimaginative-games/"
+			);
+			gotTweets[0].quotedTweet.should.equal(false);
+		});
+		it("should capture and enrich a quoted tweet", async function () {
+			const gotTweets = await linkModule.getTweets(
+				"https://twitter.com/Chronotope/status/1485620069229027329"
+			);
+			expect(gotTweets).to.have.length(6);
+			console.log("Captured Data");
+			console.dir(gotTweets[0]);
+			gotTweets[0].tweetText.should.equal(
+				"This is fkin nonsense. Once again: every other browser has already done this. Get rid of the third party cookie. Trying to sue Google to stop this is confused nonsense. https://t.co/UTK0OfeMxg"
+			);
+			expect(gotTweets[0].tweetLinks).to.have.length(0);
+			gotTweets[0].quotedTweet.should.not.equal(false);
+			gotTweets[0].quotedTweet.text.should.equal(
+				"FT: Google is facing a fresh complaint from Germany’s largest publishers and advertisers, which are demanding that the EU intervene over the search giant’s plan to stop the use of third-party cookies.\n" +
+					"https://t.co/FKUhvsh4Vo https://t.co/OiHMyKg5Q4"
+			);
+		});
+		it("should capture and enrich a threaded tweet", async function () {
+			const gotTweets = await linkModule.getTweets(
+				"https://twitter.com/Chronotope/status/1485620069229027329"
+			);
+			expect(gotTweets).to.have.length(6);
+			console.log("Captured Data");
+			console.dir(gotTweets[5]);
+			gotTweets[0].tweetText.should.equal(
+				`This is fkin nonsense. Once again: every other browser has already done this. Get rid of the third party cookie. Trying to sue Google to stop this is confused nonsense. https://t.co/UTK0OfeMxg`
+			);
+			gotTweets[4].tweetText.should.equal(
+				`Just because you're addicted to third party cookies doesn't make them good for you.`
+			);
+			expect(gotTweets[0].tweetLinks).to.have.length(0);
+			expect(gotTweets[4].quotedTweet).to.equal(false);
+			expect(gotTweets[4].tweetLinks).to.have.length(0);
+			expect(gotTweets[5].tweetLinks).to.have.length(0);
+		});
+		it.only("should capture and enrich a quoted tweets in threaded tweets", async function () {
+			const gotTweets = await linkModule.getTweets(
+				"https://twitter.com/Chronotope/status/1487437778875002883"
+			);
+			expect(gotTweets).to.have.length(8);
+			console.log("Captured Data");
+			console.dir(gotTweets[0]);
+			gotTweets[0].tweetText.should.equal(
+				`I think there's a clear case with Spotify, they pay his salary, they're responsible. Some of the other cases coming up are less clear, but I think equally correct...`
+			);
+			expect(gotTweets[0].tweetLinks).to.have.length(0);
+			console.dir(gotTweets[7].quotedTweet);
+			expect(gotTweets[7].quotedTweet.text).to.equal(
+				"Wait till @Apple finds out it hosts and streams Steve Bannon’s War Room. https://t.co/kZuEqfjZJ5"
+			);
+			gotTweets[0].quotedTweet.should.equal(false);
 		});
 	});
 });

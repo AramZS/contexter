@@ -233,6 +233,7 @@ const getLinkData = async (
 	const linkDataObj = {
 		originalLink: linkObj.link,
 		sanitizedLink: linkObj.sanitizedLink,
+		canonical: linkObj.sanitizedLink,
 		htmlText: "",
 		oembed: false,
 		readabilityObject: {
@@ -290,6 +291,9 @@ const getLinkData = async (
 		const DOMWindowObject = jsDom.window;
 		// Meta name
 		Object.assign(linkDataObj, processMetadata(DOMWindowObject));
+		if (linkDataObj.metadata && linkDataObj.metadata.canonical){
+			linkDataObj.canonical = linkDataObj.metadata.canonical;
+		}
 		// JSON LD
 		Object.assign(linkDataObj.jsonLd, jsonData(DOMWindowObject));
 		// Readability

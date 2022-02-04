@@ -107,7 +107,7 @@ const getRepliedTo = (tweetData) => {
 			}
 		});
 		if (repliedTo) {
-			console.log("referenced_tweet 0", repliedTo.id);
+			// console.log("referenced_tweet 0", repliedTo.id);
 			return repliedTo.id;
 		} else {
 			return false;
@@ -119,7 +119,7 @@ const getRepliedTo = (tweetData) => {
 
 const getTweetByUrl = async (url) => {
 	var tweetID = url.match(/(?<=status\/).*(?=\/|)/i)[0]; // "https://twitter.com/Chronotope/status/1275920609097199628";
-	console.log(tweetID);
+	// console.log(tweetID);
 	var tweet = await getTwitterClient().singleTweet(`${tweetID}`, tweetFields);
 	/** console.dir(tweet);
 	console.dir(tweet.data.referenced_tweets);
@@ -141,14 +141,14 @@ const enrichTweetWithMedia = (aTweet, tweetsInclude) => {
 	) {
 		aTweet.attachments.media_keys = aTweet.attachments.media_keys.map(
 			(media) => {
-				console.log("enrich tweet");
-				console.dir(media);
+				// console.log("enrich tweet");
+				// console.dir(media);
 				const found = tweetsInclude.media.find((mediaObj) => {
-					console.dir(mediaObj);
+					// console.dir(mediaObj);
 					return mediaObj.media_key == media;
 				});
-				console.log("found media tweet");
-				console.dir(found);
+				// console.log("found media tweet");
+				// console.dir(found);
 				return found;
 			}
 		);
@@ -199,8 +199,8 @@ const getTweetThread = async (tweetObj = defaultTweetObj) => {
 			`conversation_id:${tweetData.conversation_id} to:${userName} from:${userName}`,
 			tweetFields
 		);
-		console.log("conversation check");
-		console.dir(conversation);
+		// console.log("conversation check");
+		// console.dir(conversation);
 		if (
 			!conversation ||
 			!conversation._realData ||
@@ -215,25 +215,25 @@ const getTweetThread = async (tweetObj = defaultTweetObj) => {
 			conversation.tweets,
 			conversation.includes
 		);
-		console.dir(enrichedTweets);
+		// console.dir(enrichedTweets);
 		return enrichedTweets.reverse();
 	} else {
-		console.dir(tweetData);
+		// console.dir(tweetData);
 		conversation = [tweetData];
 		let nextTweet = true;
 		while (nextTweet != false) {
-			console.log("nextTweet", nextTweet);
+			// console.log("nextTweet", nextTweet);
 			if (nextTweet === true) {
 				nextTweet = getRepliedTo(tweetData);
-				console.log("nextTweet true", nextTweet);
+				// console.log("nextTweet true", nextTweet);
 			}
 			var tweet = await getTwitterClient().singleTweet(
 				`${nextTweet}`,
 				tweetFields
 			);
 			// promises.push(tweet);
-			console.log("tweet true", tweet);
-			console.dir(tweet.data.referenced_tweets);
+			// console.log("tweet true", tweet);
+			// console.dir(tweet.data.referenced_tweets);
 			const enrichedTweet = enrichTweetWithMedia(
 				tweet.data,
 				tweet.includes
@@ -258,7 +258,7 @@ const getQuotedTweetId = (tweetData = defaultTweetObj.data) => {
 			}
 		});
 		if (repliedTo) {
-			console.log("quoted 0", repliedTo.id);
+			// console.log("quoted 0", repliedTo.id);
 			return repliedTo.id;
 		} else {
 			return false;

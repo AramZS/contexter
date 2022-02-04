@@ -1,5 +1,5 @@
 const sanitizeLink = require("./link-sanitizer");
-const requestLink = require("./link-sanitizer");
+const requestLink = require("./link-request");
 
 module.exports = (link) => {
 	const saneLink = sanitizeLink(link);

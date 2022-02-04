@@ -233,6 +233,9 @@ describe("The Link Request Module", function () {
 			result.metadata.canonical.should.equal(
 				"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
 			);
+			result.canonical.should.equal(
+				"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
+			);
 			expect(result.metadata.keywords).to.have.members([
 				"jekyll",
 				"social-media",

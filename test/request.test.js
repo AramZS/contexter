@@ -74,6 +74,13 @@ describe("The Link Request Module", function () {
 			result.metadata.canonical.should.equal(
 				"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
 			);
+			result.metadata.image.should.equal(
+				"https://raw.githubusercontent.com/AramZS/aramzs.github.io/master/_includes/tumblr_nwncf1T2ht1rl195mo1_1280.jpg"
+			);
+			//console.dir(result.metadata);
+			result.metadata.firstParagraph.should.equal(
+				"\n        Nov 11, 20152015-11-11 10:34:51 -0500 • By\n        \n\n          Aram Zucker-Scharff\n        \n        \n          Fight With Tools\n          \n            \n          \n        \n      "
+			);
 			expect(result.metadata.keywords).to.have.members([
 				"jekyll",
 				"social-media",
@@ -220,7 +227,7 @@ describe("The Link Request Module", function () {
 				link: "http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html",
 			});
 		});
-		it("should resolve a basic URL", async function () {
+		it("should resolve a basic URL's metadata", async function () {
 			// console.log("LinkData ", result);
 			result.status.should.equal(200);
 			result.metadata.title.should.equal(
@@ -291,6 +298,7 @@ describe("The Link Request Module", function () {
 			expect(result.finalizedMeta.topics).to.have.members([
 				"jekyll",
 				"social-media",
+				"Code",
 			]);
 		});
 	});

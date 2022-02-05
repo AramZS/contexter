@@ -39,6 +39,12 @@ const pullMetadataFromRDFProperty = (documentObj, topNode, propType) => {
 
 const processMetadata = (DOMWindowObject) => {
 	const metaInfo = DOMWindowObject.document.getElementsByTagName("meta");
+	const images = DOMWindowObject.document.getElementsByTagName("img");
+	const grafs = DOMWindowObject.document.getElementsByTagName("p");
+	let leadGraf = "";
+	if (grafs && grafs.length >= 1) {
+		leadGraf = grafs[0].textContent;
+	}
 	const openGraphObject = pullMetadataFromRDFProperty(
 		DOMWindowObject.document,
 		"og:",
@@ -80,6 +86,8 @@ const processMetadata = (DOMWindowObject) => {
 							.map((value) => value.trim()),
 				  ]
 				: [],
+			image: images.length ? images[0].src : false,
+			firstParagraph: leadGraf,
 		},
 		dublinCore: {}, // https://en.wikipedia.org/wiki/Dublin_Core#DCMI_Metadata_Terms
 		opengraph: {
@@ -121,17 +129,24 @@ const assignPrimaryProperties = (metadataLinkObj) => {
 	const finalizedMeta = {
 		title: "",
 		description: "",
+		author: "",
 		creator: "",
 		publisher: "",
 		date: "",
 		subject: "",
+		image: "",
 		// topics: [],
 	};
 	let topicsSet = new Set();
-	let objectProps = ["metadata", "twitter", "opengraph", "jsonLd"];
 	Object.keys(finalizedMeta).forEach((key) => {
+		if (metadataLinkObj.readabilityObject[key]) {
+			finalizedMeta[key] = metadataLinkObj.readabilityObject[key];
+		}
 		if (metadataLinkObj.metadata[key]) {
 			finalizedMeta[key] = metadataLinkObj.metadata[key];
+		}
+		if (metadataLinkObj.dublinCore[key]) {
+			finalizedMeta[key] = metadataLinkObj.dublinCore[key];
 		}
 		if (metadataLinkObj.twitter[key]) {
 			finalizedMeta[key] = metadataLinkObj.twitter[key];
@@ -140,7 +155,38 @@ const assignPrimaryProperties = (metadataLinkObj) => {
 			finalizedMeta[key] = metadataLinkObj.opengraph[key];
 		}
 		if (metadataLinkObj.jsonLd[key]) {
-			finalizedMeta[key] = metadataLinkObj.jsonLd[key];
+			if (key === "image") {
+				if (
+					metadataLinkObj.jsonLd[key].length &&
+					metadataLinkObj.jsonLd[key][0] instanceof String
+				) {
+					finalizedMeta[key] = metadataLinkObj.jsonLd[key][0];
+				} else if (
+					metadataLinkObj.jsonLd[key].length &&
+					metadataLinkObj.jsonLd[key][0] &&
+					typeof metadataLinkObj.jsonLd[key][0] === "object" &&
+					metadataLinkObj.jsonLd[key][0].hasOwnProperty("url")
+				) {
+					finalizedMeta[key] = metadataLinkObj.jsonLd[key][0].url;
+				}
+			}
+			if (key === "author" || key === "publisher" || key === "creator") {
+				if (
+					metadataLinkObj.jsonLd[key] &&
+					metadataLinkObj.jsonLd[key].length &&
+					metadataLinkObj.jsonLd[key] instanceof String
+				) {
+					finalizedMeta[key] = metadataLinkObj.jsonLd[key];
+				} else if (
+					metadataLinkObj.jsonLd[key] &&
+					typeof metadataLinkObj.jsonLd[key] === "object" &&
+					metadataLinkObj.jsonLd[key].hasOwnProperty("name")
+				) {
+					finalizedMeta[key] = metadataLinkObj.jsonLd[key].name;
+				}
+			} else {
+				finalizedMeta[key] = metadataLinkObj.jsonLd[key];
+			}
 		}
 	});
 	finalizedMeta.title = metadataLinkObj.jsonLd.headline
@@ -176,6 +222,12 @@ const assignPrimaryProperties = (metadataLinkObj) => {
 				metadataLinkObj.opengraph.typeObject.tag
 			)
 		);
+	}
+	if (
+		metadataLinkObj.opengraph.typeObject &&
+		metadataLinkObj.opengraph.typeObject.section
+	) {
+		keywords.push(metadataLinkObj.opengraph.typeObject.section);
 	}
 	keywords.forEach((kw) => {
 		topicsSet.add(kw);

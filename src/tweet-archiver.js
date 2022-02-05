@@ -389,8 +389,8 @@ const getTweets = async (url) => {
 		return {
 			tweetData,
 			tweetText: tweetData.text,
-			tweetLinks: getLinksFromTweet(tweetData),
-			tweetLinkData: getTwitterLinkData(tweetData),
+			tweetLinks: getLinksFromTweet(tweetData), // []
+			tweetLinkData: getTwitterLinkData(tweetData), // []
 			quotedTweet: quotedData.quotedTweet.hasOwnProperty("data")
 				? quotedData.quotedTweet.data
 				: quotedData.quotedTweet,

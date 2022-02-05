@@ -291,7 +291,7 @@ const getLinkData = async (
 		const DOMWindowObject = jsDom.window;
 		// Meta name
 		Object.assign(linkDataObj, processMetadata(DOMWindowObject));
-		if (linkDataObj.metadata && linkDataObj.metadata.canonical){
+		if (linkDataObj.metadata && linkDataObj.metadata.canonical) {
 			linkDataObj.canonical = linkDataObj.metadata.canonical;
 		}
 		// JSON LD

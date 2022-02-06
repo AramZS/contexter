@@ -17,14 +17,28 @@ const pushToWayback = async (url) => {
 	const archiveTool = "https://web.archive.org";
 	const archivingPath = "/save/";
 	const saveUrl = `${archiveTool}${archivingPath}${url}`;
-	const response = await fetchUrl(saveUrl);
-
-	// console.log("Archive Org Check", saveUrl, response);
-	return response;
+	try {
+		const response = await fetchUrl(saveUrl);
+		if (response.status == 200) {
+			return response.url;
+		} else {
+			return false;
+		}
+	} catch (e) {
+		return false;
+	}
 };
 
 const archiveLink = async (url) => {
-	return false;
+	const archives = {
+		link: false,
+		wayback: false,
+	};
+	const waybackResult = await pushToWayback(url);
+	archives.link = waybackResult;
+	archives.wayback = waybackResult;
+
+	return archives;
 };
 
 module.exports = {

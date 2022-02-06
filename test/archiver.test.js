@@ -19,9 +19,12 @@ describe("The Link Archiver Module", function () {
 		});
 		it("should send a URL to archive.org", async function () {
 			const result = await linkModule.pushToWayback(
-				"https://blog.aramzs.me"
+				"https://aramzs.github.io/fun/2020/11/09/spotify-asks-listeners-to-hack-its-algorithm.html"
 			);
-			result.status.should.equal(200);
+			console.dir(result);
+			expect(/https:\/\/web\.archive\.org\/web\//.test(result)).to.equal(
+				true
+			);
 		});
 	});
 });

@@ -13,7 +13,7 @@ module.exports = (link) => {
 	if (!linkResult || linkResult.status != 200) {
 		return false;
 	}
-	const linkArchivedData = createLinkArchive(saneLink);
+	const linkArchivedData = await createLinkArchive(saneLink);
 	const linkId = uidLink(linkResult.sanitizedLink);
 	const finalLink = linkResult.canonical
 		? linkResult.canonical

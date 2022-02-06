@@ -4,16 +4,16 @@ const createLinkArchive = require("./link-archiver");
 const uidLink = require("./link-uid");
 const createLinkHTMLCard = require("./link-block-maker");
 
-module.exports = (link) => {
+module.exports = async (link) => {
 	const saneLink = sanitizeLink(link);
-	const linkResult = requestLink.getLinkData({
+	const linkResult = await requestLink.getLinkData({
 		sanitizedLink: saneLink,
 		link: link,
 	});
 	if (!linkResult || linkResult.status != 200) {
 		return false;
 	}
-	const linkArchivedData = await createLinkArchive(saneLink);
+	const linkArchivedData = await createLinkArchive.archiveLink(saneLink);
 	const linkId = uidLink(linkResult.sanitizedLink);
 	const finalLink = linkResult.canonical
 		? linkResult.canonical

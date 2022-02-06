@@ -375,6 +375,7 @@ const getTwitterLinkData = (tweetData = defaultTweetObj.data) => {
 
 const getTweets = async (url) => {
 	const tweet = await getTweetByUrl(url);
+	tweet.data.origUrl = url;
 	let thread = await getTweetThread(tweet.data);
 	if (!thread) {
 		thread = [tweet.data];

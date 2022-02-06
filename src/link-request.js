@@ -3,11 +3,28 @@ const { JSDOM } = jsdom;
 const fetchUrl = require("./fetch-tools");
 const { hasProvider, extract } = require("oembed-parser");
 var { Readability } = require("@mozilla/readability");
+const twitterTools = require("./tweet-archiver");
 
 const fetchOEmbed = async (url) => {
 	const oembedData = false;
 	if (hasProvider(url) && !url.startsWith("https://www.facebook.com")) {
-		return await extract(url);
+		const data = await extract(url);
+		if (data) {
+			return data;
+		} else {
+			if (
+				(!data && url.startsWith("https://www.twitter.com")) ||
+				url.startsWith("https://twitter.com")
+			) {
+				const response = await fetchUrl(
+					`https://publish.twitter.com/oembed?url=${url}`
+				);
+				const data = await response.json();
+				return data;
+			} else {
+				return false;
+			}
+		}
 	} else {
 		return oembedData;
 	}
@@ -72,7 +89,9 @@ const processMetadata = (DOMWindowObject) => {
 	const headMetadata = {
 		metadata: {
 			author: metaInfo.author ? metaInfo.author.content : false,
-			title: DOMWindowObject.document.querySelector("title").text,
+			title: DOMWindowObject.document.querySelector("title")
+				? DOMWindowObject.document.querySelector("title").text
+				: "",
 			description: metaInfo.description
 				? metaInfo.description.content
 				: false,
@@ -332,13 +351,60 @@ const getLinkData = async (
 			},
 			editor: personObject,
 		},
+		twitterObj: false,
 	};
+	// let fetchReadyLink = linkObj.sanitizedLink;
+
 	const response = await fetchUrl(linkObj.sanitizedLink);
 	if (response) {
 		linkDataObj.status = response.status;
 		const responseText = await response.text();
 		linkDataObj.htmlText = responseText;
-		linkDataObj.oembed = await fetchOEmbed(linkObj.sanitizedLink);
+		if (/twitter.com\//.test(linkObj.sanitizedLink)) {
+			const oneOrMoreTweets = await twitterTools.getTweets(
+				linkObj.sanitizedLink
+			);
+			// console.log("getTweets");
+			// console.dir(oneOrMoreTweets);
+			const oembedObjectSeries = oneOrMoreTweets.map(
+				async (element, index) => {
+					// console.log("Element", element);
+					const oembedData = await fetchOEmbed(
+						"https://twitter.com/twitter/status/" +
+							element.tweetData.id
+					);
+					// console.log("oembedData");
+					// console.dir(oembedData);
+					return oembedData;
+				},
+				""
+			);
+			const resolvedOembedObjectSeries = await Promise.all(
+				oembedObjectSeries
+			);
+			// console.log("getoEmbeds");
+			// console.dir(resolvedOembedObjectSeries);
+			let lastOembed = false;
+			const scriptTag = `<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>\n`;
+			const oembedSeries = resolvedOembedObjectSeries.reduce(
+				(prevValue, currValue) => {
+					lastOembed = currValue;
+					const scriptlessTags = currValue.html.replace(
+						scriptTag,
+						""
+					);
+					return prevValue + scriptlessTags;
+				},
+				""
+			);
+
+			lastOembed.html = oembedSeries + scriptTag;
+			// console.log("Final oEmbed", lastOembed);
+			linkDataObj.twitterObj = oneOrMoreTweets;
+			linkDataObj.oembed = lastOembed;
+		} else {
+			linkDataObj.oembed = await fetchOEmbed(linkObj.sanitizedLink);
+		}
 		const jsDom = new JSDOM(responseText);
 		const DOMWindowObject = jsDom.window;
 		// Meta name

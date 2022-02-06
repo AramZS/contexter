@@ -23,7 +23,12 @@ const pushToWayback = async (url) => {
 	return response;
 };
 
+const archiveLink = async (url) => {
+	return false;
+};
+
 module.exports = {
 	pushToArchiveIs,
 	pushToWayback,
+	archiveLink,
 };

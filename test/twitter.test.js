@@ -74,7 +74,7 @@ describe("The Twitter Archive Module", function () {
 						},
 						{
 							username: "swodinsky",
-							name: "shoshana wodinsky (she/her)",
+							name: "shoshana wodinsky (is on vacation)",
 							id: "2908572178",
 							url: "https://t.co/MYBP7NgPOL",
 						},

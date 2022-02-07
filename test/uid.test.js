@@ -27,11 +27,11 @@ describe("The Link UID Module", function () {
 				"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
 			);
 			expect(result).to.equal(resultThree);
-			console.dir(result);
+			// console.dir(result);
 			expect(result).to.not.equal(resultTwo);
 			expect(result).to.not.equal(resultFour);
 			expect(resultTwo).to.equal(resultFour);
-			console.dir(resultTwo);
+			// console.dir(resultTwo);
 			expect(resultTwo).to.not.equal(resultThree);
 		});
 	});

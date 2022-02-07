@@ -285,7 +285,8 @@ const getLinkData = async (
 	linkObj = {
 		link: "",
 		sanitizedLink: "",
-	}
+	},
+	tweetScriptEmbed = true
 ) => {
 	const personObject = {
 		"@type": false,
@@ -397,8 +398,11 @@ const getLinkData = async (
 				},
 				""
 			);
-
-			lastOembed.html = oembedSeries + scriptTag;
+			if (tweetScriptEmbed) {
+				lastOembed.html = oembedSeries + scriptTag;
+			} else {
+				lastOembed.html = oembedSeries;
+			}
 			// console.log("Final oEmbed", lastOembed);
 			linkDataObj.twitterObj = oneOrMoreTweets;
 			linkDataObj.oembed = lastOembed;

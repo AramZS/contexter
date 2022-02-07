@@ -104,7 +104,7 @@ describe("The Whole Module", function () {
 	});
 	describe("should archive a Tweet thread", function async() {
 		this.timeout(120000);
-		it.only("should create a URL contexter object for a tweet", async function () {
+		it("should create a URL contexter object for a tweet", async function () {
 			const result = await linkModule(
 				"https://twitter.com/Chronotope/status/1275920609097199628"
 			);

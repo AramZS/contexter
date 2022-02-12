@@ -287,7 +287,8 @@ describe("The Link Request Module", function () {
 				100
 			);
 		});
-		it("should sort metadata into a finalized form for archiving", async function () {
+		it("should sort metadata into a finalized form for archiving", function () {
+			// console.dir(result);
 			result.finalizedMeta.title.should.equal(
 				"How to make your Jekyll site show up on social"
 			);
@@ -295,11 +296,17 @@ describe("The Link Request Module", function () {
 			result.finalizedMeta.description.should.equal(
 				"Here's how to make Jekyll posts easier for others to see and share on social networks."
 			);
+			result.finalizedMeta.date.should.not.equal(false);
+			result.finalizedMeta.date.should.not.equal("");
 			expect(result.finalizedMeta.topics).to.have.members([
 				"jekyll",
 				"social-media",
 				"Code",
 			]);
+			Object.keys(result.finalizedMeta).forEach((key) => {
+				console.log(result.finalizedMeta, result.finalizedMeta[key]);
+				(!result.finalizedMeta[key]).should.not.equal(true);
+			});
 		});
 	});
 });

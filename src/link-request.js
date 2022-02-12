@@ -173,6 +173,15 @@ const assignPrimaryProperties = (metadataLinkObj) => {
 		if (metadataLinkObj.opengraph[key]) {
 			finalizedMeta[key] = metadataLinkObj.opengraph[key];
 		}
+		if (key == "subject") {
+			if (
+				metadataLinkObj.opengraph.typeObject &&
+				metadataLinkObj.opengraph.typeObject.section
+			) {
+				finalizedMeta[key] =
+					metadataLinkObj.opengraph.typeObject.section;
+			}
+		}
 		if (metadataLinkObj.jsonLd[key]) {
 			if (key === "image") {
 				if (
@@ -205,6 +214,34 @@ const assignPrimaryProperties = (metadataLinkObj) => {
 				}
 			} else {
 				finalizedMeta[key] = metadataLinkObj.jsonLd[key];
+			}
+		}
+		if (key === "date" && !finalizedMeta[key]) {
+			if (
+				metadataLinkObj.opengraph.typeObject &&
+				metadataLinkObj.opengraph.typeObject.published_time
+			) {
+				finalizedMeta[key] =
+					metadataLinkObj.opengraph.typeObject.published_time;
+			}
+			if (
+				metadataLinkObj.opengraph.typeObject &&
+				metadataLinkObj.opengraph.typeObject.modified_time
+			) {
+				finalizedMeta[key] =
+					metadataLinkObj.opengraph.typeObject.modified_time;
+			}
+			if (
+				metadataLinkObj.jsonLd &&
+				metadataLinkObj.jsonLd.datePublished
+			) {
+				finalizedMeta[key] = metadataLinkObj.jsonLd.datePublished;
+			}
+			if (metadataLinkObj.jsonLd && metadataLinkObj.jsonLd.dateModified) {
+				finalizedMeta[key] = metadataLinkObj.jsonLd.dateModified;
+			}
+			if (!finalizedMeta[key]) {
+				finalizedMeta[key] = new Date().toISOString();
 			}
 		}
 	});
@@ -257,6 +294,13 @@ const assignPrimaryProperties = (metadataLinkObj) => {
 	}
 	if (metadataLinkObj.jsonLd.author && metadataLinkObj.jsonLd.author.name) {
 		finalizedMeta.creator = metadataLinkObj.jsonLd.author.name;
+	}
+	if (!finalizedMeta.subject && finalizedMeta.topics) {
+		if (Array.isArray(finalizedMeta.topics)) {
+			finalizedMeta.subject = finalizedMeta.topics[0];
+		} else {
+			finalizedMeta.subject = finalizedMeta.topics;
+		}
 	}
 	// console.log("finalizedMeta", finalizedMeta);
 	return finalizedMeta;

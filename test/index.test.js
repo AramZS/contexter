@@ -10,7 +10,7 @@ const linkModule = require("../src/index");
 
 describe("The Whole Module", function () {
 	describe("should archive a basic URL", function async() {
-		this.timeout(60000);
+		this.timeout(90000);
 		it("should create a URL contexter object", async function () {
 			const result = await linkModule(
 				"https://aramzs.github.io/fun/2020/11/09/spotify-asks-listeners-to-hack-its-algorithm.html"

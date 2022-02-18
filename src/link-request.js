@@ -97,7 +97,11 @@ const processMetadata = (DOMWindowObject) => {
 				: false,
 			canonical: DOMWindowObject.document.querySelector(
 				"link[rel='canonical']"
-			).href,
+			)
+				? DOMWindowObject.document.querySelector(
+						"link[rel='canonical']"
+				  ).href
+				: false,
 			keywords: metaInfo.keywords
 				? [
 						...metaInfo.keywords.content
@@ -399,8 +403,12 @@ const getLinkData = async (
 		twitterObj: false,
 	};
 	// let fetchReadyLink = linkObj.sanitizedLink;
-
-	const response = await fetchUrl(linkObj.sanitizedLink);
+	let response;
+	try {
+		response = await fetchUrl(linkObj.sanitizedLink);
+	} catch (e) {
+		console.log("Link retrieve failed for " + linkObj.sanitizedLink, e);
+	}
 	if (response) {
 		linkDataObj.status = response.status;
 		const responseText = await response.text();
@@ -459,6 +467,9 @@ const getLinkData = async (
 		Object.assign(linkDataObj, processMetadata(DOMWindowObject));
 		if (linkDataObj.metadata && linkDataObj.metadata.canonical) {
 			linkDataObj.canonical = linkDataObj.metadata.canonical;
+		} else {
+			linkDataObj.canonical = linkObj.sanitizedLink;
+			linkDataObj.metadata.canonical = linkObj.sanitizedLink;
 		}
 		// JSON LD
 		Object.assign(linkDataObj.jsonLd, jsonData(DOMWindowObject));

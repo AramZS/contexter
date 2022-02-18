@@ -4,7 +4,7 @@ const createLinkArchive = require("./link-archiver");
 const uidLink = require("./link-uid");
 const createLinkHTMLCard = require("./link-block-maker");
 
-module.exports = async (link) => {
+const context = async (link) => {
 	const saneLink = sanitizeLink(link);
 	const linkResult = await requestLink.getLinkData({
 		sanitizedLink: saneLink,
@@ -28,4 +28,10 @@ module.exports = async (link) => {
 		linkId: linkId,
 		data: linkResult,
 	};
+};
+
+module.exports = {
+	sanitizeLink,
+	uidLink,
+	context,
 };

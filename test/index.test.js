@@ -6,7 +6,8 @@ var chai = require("chai"),
 
 require("dotenv").config();
 
-const linkModule = require("../src/index");
+const { context } = require("../src/index");
+const linkModule = context;
 
 describe("The Whole Module", function () {
 	describe("should archive a basic URL", function async() {

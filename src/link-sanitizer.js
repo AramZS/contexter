@@ -5,10 +5,7 @@ var sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 const regexClean = (link) => {
 	// return Regex.Replace(url, /[^-A-Za-z0-9+&@#\/%?=~_|!:,.;\(\)]/gim, "");
 	// [^a-z0-9-~+_.?#=!&;,/:%@$\|*\'()\\x80-\\xff]
-	return link.replaceAll(
-		/[^a-z0-9-~+_.?#=!&;,\/:%@$\|*\'()\\x80-\\xff]/gim,
-		""
-	);
+	return link.replace(/[^a-z0-9-~+_.?#=!&;,\/:%@$\|*\'()\\x80-\\xff]/gim, "");
 };
 
 const stripMarketingParams = (url) => {

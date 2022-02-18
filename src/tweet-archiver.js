@@ -373,6 +373,8 @@ const getTwitterLinkData = (tweetData = defaultTweetObj.data) => {
 	return urlSet;
 };
 
+const isTweet = (url) => {};
+
 const getTweets = async (url) => {
 	const tweet = await getTweetByUrl(url);
 	tweet.data.origUrl = url;

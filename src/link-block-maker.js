@@ -1,3 +1,5 @@
+var UglifyJS = require("uglify-js");
+
 const personObject = {
 	"@type": false,
 	name: false,
@@ -65,10 +67,373 @@ const linkDataObj = {
 	},
 };
 
+const createInlineScript = () => {
+	const innerScript = `
+window.contexterSetup = window.contexterSetup ? window.contexterSetup : function() {
+	window.contexterSetupComplete = true;
+	class ContexterLink extends HTMLAnchorElement {
+		constructor() {
+		  // Always call super first in constructor
+		  super();
+
+		  // Element functionality written in here
+		}
+		connectedCallback() {
+		  this.setAttribute("target", "_blank");
+		}
+	  }
+	  // https://stackoverflow.com/questions/70716734/custom-web-component-that-acts-like-a-link-anchor-tag
+	  customElements.define("contexter-link", ContexterLink, {
+		extends: "a",
+	  });
+	  customElements.define(
+		"contexter-inner",
+		class extends HTMLElement {
+		  constructor() {
+			// Always call super first in constructor
+			super();
+			// Element functionality written in here
+		  }
+		  attributeChangedCallback(name, oldValue, newValue) {
+
+		  }
+		  connectedCallback() {
+			this.className = "contexter-box__inner";
+		  }
+		}
+	  );
+	  customElements.define(
+		"contexter-thumbnail",
+		class extends HTMLElement {
+		  constructor() {
+			// Always call super first in constructor
+			super();
+			// Element functionality written in here
+		  }
+		  attributeChangedCallback(name, oldValue, newValue) {
+
+		  }
+		  connectedCallback() {
+			this.className = "contexter-box__thumbnail";
+		  }
+		}
+	  );
+	  customElements.define(
+		"contexter-byline",
+		class extends HTMLElement {
+		  constructor() {
+			// Always call super first in constructor
+			super();
+			// Element functionality written in here
+		  }
+		  attributeChangedCallback(name, oldValue, newValue) {
+
+		  }
+		  connectedCallback() {
+			this.className = "contexter-box__byline";
+		  }
+		}
+	  );
+	  customElements.define(
+		"contexter-keywordset",
+		class extends HTMLElement {
+		  constructor() {
+			// Always call super first in constructor
+			super();
+			// Element functionality written in here
+		  }
+		  attributeChangedCallback(name, oldValue, newValue) {
+
+		  }
+		  connectedCallback() {
+			this.className = "contexter-box__keywordset";
+		  }
+		}
+	  );
+	  customElements.define(
+		"contexter-linkset",
+		class extends HTMLElement {
+		  constructor() {
+			// Always call super first in constructor
+			super();
+			// Element functionality written in here
+		  }
+		  attributeChangedCallback(name, oldValue, newValue) {
+
+		  }
+		  connectedCallback() {
+			this.className = "contexter-box__linkset";
+		  }
+		}
+	  );
+	  customElements.define(
+		"contexter-meta",
+		class extends HTMLElement {
+		  constructor() {
+			// Always call super first in constructor
+			super();
+			// Element functionality written in here
+		  }
+		  attributeChangedCallback(name, oldValue, newValue) {
+
+		  }
+		  connectedCallback() {
+			this.className = "contexter-box__meta";
+		  }
+		}
+	  );
+	  customElements.define(
+		"contexter-summary",
+		class extends HTMLElement {
+		  constructor() {
+			// Always call super first in constructor
+			super();
+			// Element functionality written in here
+		  }
+		  attributeChangedCallback(name, oldValue, newValue) {
+
+		  }
+		  connectedCallback() {
+			this.className = "p-summary entry-summary";
+		  }
+		}
+	  );
+	  customElements.define(
+		"contexter-box-head",
+		class extends HTMLElement {
+		  constructor() {
+			// Always call super first in constructor
+			super();
+
+			// Element functionality written in here
+		  }
+		  connectedCallback() {
+			this.className = "contexter-box__head";
+		  }
+		}
+	  );
+	  customElements.define(
+		"contexter-box-inner",
+		class extends HTMLElement {
+		  constructor() {
+			// Always call super first in constructor
+			super();
+
+			// Element functionality written in here
+		  }
+		  connectedCallback() {
+		  }
+		}
+	  );
+	  // https://developers.google.com/web/fundamentals/web-components/best-practices
+	  class ContexterBox extends HTMLElement {
+		constructor() {
+		  // Always call super first in constructor
+		  super();
+		  this.first = true;
+		  this.shadow = this.attachShadow({ mode: "open" });
+		}
+		connectedCallback() {
+		  if (this.first){
+			this.first = false
+			var style = document.createElement("style");
+			style.innerHTML = \`
+					:host {
+					  --background: #FFF;
+					  font-family: Franklin,Arial,Helvetica,sans-serif;
+					  font-size: 14px;
+					  color: black;
+					  background: #f5f6f7;
+					  width: 600px;
+					  min-height: 90px;
+					  display: block;
+					  padding: 8px;
+					  border: 1px solid darkblue;
+					  cursor: pointer;
+					  box-sizing: border-box;
+					  margin: 6px;
+					  contain: content;
+					}
+					/* Extra small devices (phones, 600px and down) */
+					@media only screen and (max-width: 600px) {...}
+					/* Small devices (portrait tablets and large phones, 600px and up) */
+					@media only screen and (min-width: 600px) {...}
+					/* Medium devices (landscape tablets, 768px and up) */
+					@media only screen and (min-width: 768px) {...}
+					/* Large devices (laptops/desktops, 992px and up) */
+					@media only screen and (min-width: 992px) {...}
+					/* Extra large devices (large laptops and desktops, 1200px and up) */
+					@media only screen and (min-width: 1200px) {...}
+					@media (prefers-color-scheme: dark){
+
+					}
+					// can only select top-level nodes with slotted
+					::slotted(*) {
+					  max-width: 100%;
+					  display:block;
+					}
+					::slotted([slot=thumbnail]) {
+					  max-width: 100%;
+					  display:block;
+					}
+					::slotted([slot=header]) {
+					  width: 100%;
+					  font-size: 1.25rem;
+					  font-weight: bold;
+					  display:block;
+					  margin-bottom: 6px;
+					}
+					::slotted([slot=author]) {
+					  max-width: 50%;
+					  font-size: 12px;
+					  display:inline-block;
+					  float: left;
+					}
+					::slotted([slot=time]) {
+					  max-width: 50%;
+					  font-size: 12px;
+					  display:inline-block;
+					  float: right;
+					}
+					::slotted([slot=summary]) {
+					  width: 100%;
+					  margin-top: 6px;
+					  padding: 10px 2px;
+					  border-top: 1px solid black;
+					  font-size: 15px;
+					  display:inline-block;
+					  margin-bottom: 6px;
+					}
+					contexter-meta {
+					  height: auto;
+					  margin-bottom: 4px;
+					  width: 100%;
+					  display: grid;
+					  position: relative;
+					  min-height: 16px;
+					  grid-template-columns: repeat(2, 1fr);
+					}
+					::slotted([slot=keywords]):not(:empty) {
+					  width: 80%;
+					  padding: 2px 4px;
+					  border-top: 1px solid black;
+					  font-size: 11px;
+					  display: block;
+					  float: right;
+					  font-style: italic;
+					  text-align: right;
+					  grid-column: 2/2;
+					  grid-row: 1;
+					  align-self: end;
+					  justify-self: end;
+					}
+					::slotted([slot=links]) {
+					  width: 80%;
+					  padding: 2px 4px;
+					  font-size: 13px;
+					  float: left;
+					  font-weight: bold;
+					  grid-row: 1;
+					  grid-column: 1/2;
+					  align-self: end;
+					  justify-self: start;
+					}
+				\`;
+			var lightDomStyle = document.createElement("style");
+			lightDomStyle.innerHTML = \`
+					contexter-box {
+					  contain: paint style size;
+					}
+					/* Extra small devices (phones, 600px and down) */
+					@media only screen and (max-width: 600px) {...}
+					/* Small devices (portrait tablets and large phones, 600px and up) */
+					@media only screen and (min-width: 600px) {...}
+					/* Medium devices (landscape tablets, 768px and up) */
+					@media only screen and (min-width: 768px) {...}
+					/* Large devices (laptops/desktops, 992px and up) */
+					@media only screen and (min-width: 992px) {...}
+					/* Extra large devices (large laptops and desktops, 1200px and up) */
+					@media only screen and (min-width: 1200px) {...}
+					@media (prefers-color-scheme: dark){
+
+					}
+					contexter-box .read-link {
+					  font-weight: bold;
+					}
+					contexter-box a {
+						color: #0000ee;
+					}
+					contexter-box img {
+					  width: 100%;
+					  border: 0;
+					  padding: 0;
+					  margin: 0;
+					}
+			\`;
+			this.appendChild(lightDomStyle);
+			//https://stackoverflow.com/questions/49678342/css-how-to-target-slotted-siblings-in-shadow-dom-root
+			this.shadow.appendChild(style);
+			// https://developers.google.com/web/fundamentals/web-components/shadowdom
+			// https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_templates_and_slots
+			const innerContainer = document.createElement("contexter-box-inner")
+			this.shadow.appendChild(innerContainer)
+			// https://javascript.info/slots-composition
+			const innerSlotThumbnail = document.createElement('slot');
+			innerSlotThumbnail.name = "thumbnail"
+			innerContainer.appendChild(innerSlotThumbnail)
+			const innerSlotHeader = document.createElement('slot');
+			innerSlotHeader.name = "header"
+			innerContainer.appendChild(innerSlotHeader)
+			const innerSlotAuthor = document.createElement('slot');
+			innerSlotAuthor.name = "author"
+			innerContainer.appendChild(innerSlotAuthor)
+			const innerSlotTime = document.createElement('slot');
+			innerSlotTime.name = "time"
+			innerContainer.appendChild(innerSlotTime)
+			const innerSlotSummary = document.createElement('slot');
+			innerSlotSummary.name = "summary"
+			innerContainer.appendChild(innerSlotSummary)
+
+			const metaContainer = document.createElement("contexter-meta");
+			innerContainer.appendChild(metaContainer)
+
+			const innerSlotInfo = document.createElement('slot');
+			innerSlotInfo.name = "keywords"
+			metaContainer.appendChild(innerSlotInfo)
+			const innerSlotLinks= document.createElement('slot');
+			innerSlotLinks.name = "links"
+			metaContainer.appendChild(innerSlotLinks)
+
+			this.className = "contexter-box";
+			this.onclick = (e) => {
+			  // console.log('Click on block', this)
+			  if (!e.target.className.includes('read-link') && !e.target.className.includes('title-link')) {
+				const mainLinks = this.querySelectorAll('a.main-link');
+				// console.log('mainLink', e, mainLinks)
+				mainLinks[0].click()
+			  }
+			}
+		  }
+		}
+	  }
+
+	  customElements.define("contexter-box", ContexterBox);
+}
+if (!window.contexterSetupComplete){
+	window.contexterSetup();
+}
+`;
+	const uglifyCode = UglifyJS.minify(innerScript, {
+		mangle: false,
+		warnings: true,
+	});
+	// console.log(uglifyCode);
+	const scriptElement = `<script>${uglifyCode.code}</script>`;
+	return scriptElement;
+};
+
 const getBestLink = function (data = linkDataObj) {
-	return linkDataObj.canonical
-		? linkDataObj.canonical
-		: linkDataObj.sanitizedLink;
+	return data.canonical.length > 1 ? data.canonical : data.sanitizedLink;
 };
 
 const useOembed = function (data = linkDataObj) {
@@ -80,9 +445,9 @@ const useOembed = function (data = linkDataObj) {
 const createTitle = (data = linkDataObj, bestLink) => {
 	const title = data.finalizedMeta.title;
 	return `
-	<span class="p-name entry-title" itemprop="headline">
-		<a href="${bestLink}" itemprop="url">${title}</a>
-  	</span>`;
+	<contexter-box-head slot="header" class="p-name entry-title" itemprop="headline">
+		<a is="contexter-link" href="${bestLink}" itemprop="url">${title}</a>
+	</contexter-box-head>`;
 };
 
 const createByline = (data = linkDataObj) => {
@@ -93,9 +458,9 @@ const createByline = (data = linkDataObj) => {
 			author = data.finalizedMeta.publisher;
 		}
 	}
-	return `<div class="p-author author">
+	return `<contexter-byline class="p-author author" slot="author">
 	<span class="p-name byline" rel="author" itemprop="author">${author}</span>
-  </div>`;
+  </contexter-byline>`;
 };
 
 const createTopics = (data = linkDataObj) => {
@@ -104,9 +469,9 @@ const createTopics = (data = linkDataObj) => {
 		return `<span rel="category tag" class="p-category" itemprop="keywords">${word}</span>`;
 	});
 	return `
-		<div itemprop="keywords">
+		<contexter-keywordset itemprop="keywords" slot="keywords">
 			${keywordsString.join(", ")}
-		</div>`;
+		</contexter-keywordset>`;
 };
 
 const createSummaryBlock = (data = linkDataObj) => {
@@ -128,9 +493,9 @@ const createSummaryBlock = (data = linkDataObj) => {
 		return "";
 	}
 	return `
-	<summary class="p-summary entry-summary" itemprop="abstract">
+	<contexter-summary class="p-summary entry-summary" itemprop="abstract" slot="summary">
 		<p>${summary}</p>
-	</summary>`;
+	</contexter-summary>`;
 };
 
 const createDatetimeBlock = (data = linkDataObj) => {
@@ -167,7 +532,7 @@ const createDatetimeBlock = (data = linkDataObj) => {
 	try {
 		const dateObj = new Date(date);
 		if (dateObj && dateObj != "Invalid Date" && dateObj != "NaN") {
-			return `<time class="dt-published published" itemprop="datePublished" datetime="${dateObj.toISOString()}">${dateObj.getMonth()} ${dateObj.getDate()}, ${dateObj.getFullYear()}</time>`;
+			return `<time class="dt-published published" slot="time" itemprop="datePublished" datetime="${dateObj.toISOString()}">${dateObj.getMonth()}/${dateObj.getDate()}/${dateObj.getFullYear()}</time>`;
 		} else {
 			return "";
 		}
@@ -178,7 +543,9 @@ const createDatetimeBlock = (data = linkDataObj) => {
 
 const createImageBlock = (data = linkDataObj) => {
 	let imageSrc = "";
-	if (
+	if (data && data.blobImage && data.blobImage.length) {
+		imageSrc = blobImage;
+	} else if (
 		data &&
 		data.finalizedMeta &&
 		data.finalizedMeta.image &&
@@ -198,7 +565,7 @@ const createArchiveLink = (data = linkDataObj) => {
 	} else {
 		archiveLink = data.archivedData.link;
 	}
-	return `<a href="${archiveLink}" target="_blank" itemprop="archivedAt">Archived</a>`;
+	return `<a href="${archiveLink}" is="contexter-link" target="_blank" class="read-link archive-link" itemprop="archivedAt">Archived</a>`;
 };
 
 const createLinkBlock = (data = linkDataObj) => {
@@ -207,26 +574,28 @@ const createLinkBlock = (data = linkDataObj) => {
 	if (oembed) {
 		return oembed;
 	}
-	return `
-<article id="link-card h-entry hentry" itemscope itemtype="https://schema.org/CreativeWork">
-    <div class="thumbnail">
+	const linkBlock = `
+${createInlineScript()}
+<contexter-box class="link-card h-entry hentry" itemscope="" itemtype="https://schema.org/CreativeWork">
+    <contexter-thumbnail class="thumbnail" slot="thumbnail">
       ${createImageBlock(data)}
-    </div>
-    <div>
-      <header>
+    </contexter-thumbnail>
+	<contexter-box-head slot="header" class="p-name entry-title" itemprop="headline">
         ${createTitle(data, bestLink)}
-      </header>
+    </contexter-box-head>
 		${createByline(data)}
 		${createDatetimeBlock(data)}
 		${createSummaryBlock(data)}
 		${createTopics(data)}
-      <div class="links">
-        ${createArchiveLink(data)}
-        <a href="${bestLink}" target="_blank" class="read-link" itemprop="isBasedOn">Read</a>
-      </div>
-    </div>
-</article>
+	<contexter-linkset class="links" slot="links">
+        ${createArchiveLink(data)}&nbsp;|&nbsp;
+        <a is="contexter-link" href="${bestLink}" class="read-link main-link" itemprop="sameAs">Read</a>
+    </contexter-linkset>
+</contexter-box>
   `;
+	// Tabbed HTML gets put into a code block.
+	const safeLinkBlock = linkBlock.replace(/\t|^\s+|\n|\r/gim, "");
+	return safeLinkBlock;
 };
 
 module.exports = {

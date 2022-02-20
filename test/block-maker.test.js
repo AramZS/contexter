@@ -41,12 +41,12 @@ describe("The Link Block Maker Module", function () {
 				jsDom.window.document.getElementsByClassName("entry-title")[0]
 					.textContent
 			).to.equal(
-				"\n\t\tHow to give your Jekyll Site Structured Data for Search with JSON-LD\n  \t"
+				"How to give your Jekyll Site Structured Data for Search with JSON-LD"
 			);
 			jsDom.window.document
 				.getElementsByClassName("entry-summary")[0]
 				.textContent.should.equal(
-					"\n\t\tLet's make your Jekyll site work with Schema.org structured data and JSON-LD.\n\t"
+					"Let's make your Jekyll site work with Schema.org structured data and JSON-LD."
 				);
 			expect(
 				jsDom.window.document.getElementsByClassName("p-category")[0]

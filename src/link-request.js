@@ -199,7 +199,14 @@ const assignPrimaryProperties = (metadataLinkObj) => {
 					typeof metadataLinkObj.jsonLd[key][0] === "object" &&
 					metadataLinkObj.jsonLd[key][0].hasOwnProperty("url")
 				) {
-					finalizedMeta[key] = metadataLinkObj.jsonLd[key][0].url;
+					if (metadataLinkObj.jsonLd[key][0].url instanceof String) {
+						finalizedMeta[key] = metadataLinkObj.jsonLd[key][0].url;
+					} else if (
+						Array.isArray(metadataLinkObj.jsonLd[key][0].url)
+					) {
+						finalizedMeta[key] =
+							metadataLinkObj.jsonLd[key][0].url[0];
+					}
 				}
 			}
 			if (key === "author" || key === "publisher" || key === "creator") {
@@ -413,6 +420,7 @@ const getLinkData = async (
 		linkDataObj.status = response.status;
 		const responseText = await response.text();
 		linkDataObj.htmlText = responseText;
+		// What do I do about Quote Tweets?
 		if (/twitter.com\//.test(linkObj.sanitizedLink)) {
 			const oneOrMoreTweets = await twitterTools.getTweets(
 				linkObj.sanitizedLink

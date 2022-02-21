@@ -93,7 +93,7 @@ describe("The Link Request Module", function () {
 				"social-media",
 			]);
 		});
-		it.only("should retrieve opengraph data from an HTML document", function () {
+		it("should retrieve opengraph data from an HTML document", function () {
 			const jsDom = new JSDOM(htmlPage);
 			const result = linkModule.processMetadata(jsDom.window);
 			result.opengraph.title.should.equal(

@@ -41,6 +41,30 @@ describe("The Twitter Archive Module", function () {
 			);
 			expect(getTweet).to.deep.include({
 				data: {
+					author_data: {
+						description:
+							"AramZS. he/him. Privacy Engineer. Tech for journalism. Ad Tech. Prev: Fullstack, strategy, econ/game journo, storytelling, altac. Views are only my own",
+						entities: {
+							url: {
+								urls: [
+									{
+										display_url: "bit.ly/aram",
+										end: 23,
+										expanded_url: "http://bit.ly/aram",
+										start: 0,
+										url: "https://t.co/2rHFiUBQX1",
+									},
+								],
+							},
+						},
+						id: "15099054",
+						location: "NYC, NY",
+						name: "Aram Zucker-Scharff",
+						profile_image_url:
+							"https://pbs.twimg.com/profile_images/1077038356733796352/x492f_KO_normal.jpg",
+						url: "https://t.co/2rHFiUBQX1",
+						username: "Chronotope",
+					},
 					text: "@swodinsky Everything connected to the internet eventually becomes ads :/",
 					referenced_tweets: [
 						{ type: "replied_to", id: "1275920325000278020" },
@@ -48,6 +72,7 @@ describe("The Twitter Archive Module", function () {
 					author_id: "15099054",
 					in_reply_to_user_id: "15099054",
 					id: "1275920609097199628",
+					in_reply_to_user_data: {},
 					entities: {
 						mentions: [
 							{
@@ -74,7 +99,7 @@ describe("The Twitter Archive Module", function () {
 						},
 						{
 							username: "swodinsky",
-							name: "shoshana wodinsky (is on vacation)",
+							name: "shoshana wodinsky (she/her)",
 							id: "2908572178",
 							url: "https://t.co/MYBP7NgPOL",
 						},
@@ -121,6 +146,36 @@ describe("The Twitter Archive Module", function () {
 						},
 					],
 				},
+			});
+		});
+	});
+	describe("Capture a user", function () {
+		this.timeout(60000);
+		it("should capture a user by id", async function () {
+			const user = await linkModule.getUser("15099054");
+			expect(user).to.deep.include({
+				description:
+					"AramZS. he/him. Privacy Engineer. Tech for journalism. Ad Tech. Prev: Fullstack, strategy, econ/game journo, storytelling, altac. Views are only my own",
+				entities: {
+					url: {
+						urls: [
+							{
+								display_url: "bit.ly/aram",
+								end: 23,
+								expanded_url: "http://bit.ly/aram",
+								start: 0,
+								url: "https://t.co/2rHFiUBQX1",
+							},
+						],
+					},
+				},
+				id: "15099054",
+				location: "NYC, NY",
+				name: "Aram Zucker-Scharff",
+				profile_image_url:
+					"https://pbs.twimg.com/profile_images/1077038356733796352/x492f_KO_normal.jpg",
+				url: "https://t.co/2rHFiUBQX1",
+				username: "Chronotope",
 			});
 		});
 	});

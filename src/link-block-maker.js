@@ -69,193 +69,288 @@ const linkDataObj = {
 
 const createInlineScript = () => {
 	const innerScript = `
-window.contexterSetup = window.contexterSetup ? window.contexterSetup : function() {
-	window.contexterSetupComplete = true;
-	class ContexterLink extends HTMLAnchorElement {
+		window.contexterSetup = window.contexterSetup ? window.contexterSetup : function() {
+			window.contexterSetupComplete = true;
+		class ContexterLink extends HTMLAnchorElement {
 		constructor() {
-		  // Always call super first in constructor
-		  super();
+			// Always call super first in constructor
+			super();
 
-		  // Element functionality written in here
+			// Element functionality written in here
 		}
 		connectedCallback() {
-		  this.setAttribute("target", "_blank");
+			this.setAttribute("target", "_blank");
 		}
-	  }
-	  // https://stackoverflow.com/questions/70716734/custom-web-component-that-acts-like-a-link-anchor-tag
-	  customElements.define("contexter-link", ContexterLink, {
+		}
+		// https://stackoverflow.com/questions/70716734/custom-web-component-that-acts-like-a-link-anchor-tag
+		customElements.define("contexter-link", ContexterLink, {
 		extends: "a",
-	  });
-	  customElements.define(
+		});
+		customElements.define(
 		"contexter-inner",
 		class extends HTMLElement {
-		  constructor() {
+			constructor() {
 			// Always call super first in constructor
 			super();
 			// Element functionality written in here
-		  }
-		  attributeChangedCallback(name, oldValue, newValue) {
+			}
+			attributeChangedCallback(name, oldValue, newValue) {
 
-		  }
-		  connectedCallback() {
+			}
+			connectedCallback() {
 			this.className = "contexter-box__inner";
-		  }
+			}
 		}
-	  );
-	  customElements.define(
+		);
+		customElements.define(
 		"contexter-thumbnail",
 		class extends HTMLElement {
-		  constructor() {
+			constructor() {
 			// Always call super first in constructor
 			super();
 			// Element functionality written in here
-		  }
-		  attributeChangedCallback(name, oldValue, newValue) {
+			}
+			attributeChangedCallback(name, oldValue, newValue) {
 
-		  }
-		  connectedCallback() {
+			}
+			connectedCallback() {
 			this.className = "contexter-box__thumbnail";
-		  }
+			}
 		}
-	  );
-	  customElements.define(
+		);
+		customElements.define(
 		"contexter-byline",
 		class extends HTMLElement {
-		  constructor() {
+			constructor() {
 			// Always call super first in constructor
 			super();
 			// Element functionality written in here
-		  }
-		  attributeChangedCallback(name, oldValue, newValue) {
+			}
+			attributeChangedCallback(name, oldValue, newValue) {
 
-		  }
-		  connectedCallback() {
+			}
+			connectedCallback() {
 			this.className = "contexter-box__byline";
-		  }
+			}
 		}
-	  );
-	  customElements.define(
+		);
+		customElements.define(
 		"contexter-keywordset",
 		class extends HTMLElement {
-		  constructor() {
+			constructor() {
 			// Always call super first in constructor
 			super();
 			// Element functionality written in here
-		  }
-		  attributeChangedCallback(name, oldValue, newValue) {
+			}
+			attributeChangedCallback(name, oldValue, newValue) {
 
-		  }
-		  connectedCallback() {
+			}
+			connectedCallback() {
 			this.className = "contexter-box__keywordset";
-		  }
+			}
 		}
-	  );
-	  customElements.define(
+		);
+		customElements.define(
 		"contexter-linkset",
 		class extends HTMLElement {
-		  constructor() {
+			constructor() {
 			// Always call super first in constructor
 			super();
 			// Element functionality written in here
-		  }
-		  attributeChangedCallback(name, oldValue, newValue) {
+			}
+			attributeChangedCallback(name, oldValue, newValue) {
 
-		  }
-		  connectedCallback() {
+			}
+			connectedCallback() {
 			this.className = "contexter-box__linkset";
-		  }
+			}
 		}
-	  );
-	  customElements.define(
+		);
+		customElements.define(
 		"contexter-meta",
 		class extends HTMLElement {
-		  constructor() {
+			constructor() {
 			// Always call super first in constructor
 			super();
 			// Element functionality written in here
-		  }
-		  attributeChangedCallback(name, oldValue, newValue) {
+			}
+			attributeChangedCallback(name, oldValue, newValue) {
 
-		  }
-		  connectedCallback() {
+			}
+			connectedCallback() {
 			this.className = "contexter-box__meta";
-		  }
+			}
 		}
-	  );
-	  customElements.define(
+		);
+		customElements.define(
 		"contexter-summary",
 		class extends HTMLElement {
-		  constructor() {
+			constructor() {
 			// Always call super first in constructor
 			super();
 			// Element functionality written in here
-		  }
-		  attributeChangedCallback(name, oldValue, newValue) {
+			}
+			attributeChangedCallback(name, oldValue, newValue) {
 
-		  }
-		  connectedCallback() {
+			}
+			connectedCallback() {
 			this.className = "p-summary entry-summary";
-		  }
+			}
 		}
-	  );
-	  customElements.define(
+		);
+		customElements.define(
 		"contexter-box-head",
 		class extends HTMLElement {
-		  constructor() {
+			constructor() {
 			// Always call super first in constructor
 			super();
 
 			// Element functionality written in here
-		  }
-		  connectedCallback() {
+			}
+			connectedCallback() {
 			this.className = "contexter-box__head";
-		  }
+			}
 		}
-	  );
-	  customElements.define(
+		);
+		customElements.define(
 		"contexter-box-inner",
 		class extends HTMLElement {
-		  constructor() {
+			constructor() {
 			// Always call super first in constructor
 			super();
 
 			// Element functionality written in here
-		  }
-		  connectedCallback() {
-		  }
+			}
+			connectedCallback() {
+			}
 		}
-	  );
-	  // https://developers.google.com/web/fundamentals/web-components/best-practices
-	  class ContexterBox extends HTMLElement {
+		);
+		// https://developers.google.com/web/fundamentals/web-components/best-practices
+		class ContexterBox extends HTMLElement {
 		constructor() {
-		  // Always call super first in constructor
-		  super();
-		  this.first = true;
-		  this.shadow = this.attachShadow({ mode: "open" });
+			// Always call super first in constructor
+			super();
+			this.first = true;
+			this.shadow = this.attachShadow({ mode: "open" });
 		}
 		connectedCallback() {
-		  if (this.first){
+			if (this.first){
 			this.first = false
 			var style = document.createElement("style");
 			style.innerHTML = \`
 					:host {
-					  --background: #FFF;
-					  font-family: Franklin,Arial,Helvetica,sans-serif;
-					  font-size: 14px;
-					  color: black;
-					  background: #f5f6f7;
-					  width: 600px;
-					  min-height: 90px;
-					  display: block;
-					  padding: 8px;
-					  border: 1px solid darkblue;
-					  cursor: pointer;
-					  box-sizing: border-box;
-					  margin: 6px;
-					  contain: content;
+						--background: #f5f6f7;
+						--border: darkblue;
+						--blue: #0000ee;
+						--font-color: black;
+						--inner-border: black;
+						font-family: Franklin,Arial,Helvetica,sans-serif;
+						font-size: 14px;
+						background: var(--background);
+						width: 600px;
+						color: var(--font-color);
+						min-height: 90px;
+						display: block;
+						padding: 8px;
+						border: 1px solid var(--border);
+						cursor: pointer;
+						box-sizing: border-box;
+						margin: 6px;
+						contain: content;
+					}
+
+					// can only select top-level nodes with slotted
+					::slotted(*) {
+						max-width: 100%;
+						display:block;
+					}
+					::slotted([slot=thumbnail]) {
+						max-width: 100%;
+						display:block;
+					}
+					::slotted([slot=header]) {
+						width: 100%;
+						font-size: 1.25rem;
+						font-weight: bold;
+						display:block;
+						margin-bottom: 6px;
+					}
+					::slotted([slot=author]) {
+						max-width: 50%;
+						font-size: 12px;
+						display:inline-block;
+						float: left;
+					}
+					::slotted([slot=time]) {
+						max-width: 50%;
+						font-size: 12px;
+						display:inline-block;
+						float: right;
+					}
+					::slotted([slot=summary]) {
+						width: 100%;
+						margin-top: 6px;
+						padding: 10px 2px;
+						border-top: 1px solid var(--inner-border);
+						font-size: 15px;
+						display:inline-block;
+						margin-bottom: 6px;
+					}
+					contexter-meta {
+						height: auto;
+						margin-bottom: 4px;
+						width: 100%;
+						display: grid;
+						position: relative;
+						min-height: 16px;
+						grid-template-columns: repeat(2, 1fr);
+					}
+					::slotted([slot=keywords]) {
+						width: 80%;
+						padding: 2px 4px;
+						border-top: 1px solid var(--inner-border);
+						font-size: 11px;
+						display: block;
+						float: right;
+						font-style: italic;
+						text-align: right;
+						grid-column: 2/2;
+						grid-row: 1;
+						align-self: end;
+						justify-self: end;
+					}
+					::slotted([slot=archive-link]) {
+						font-size: 1em;
+						display: inline;
+					}
+					::slotted([slot=archive-link])::after {
+						content: "|";
+						display: inline;
+						color: var(--font-color);
+						text-decoration: none;
+						margin: 0 .5em;
+					}
+					::slotted([slot=read-link]) {
+						font-size: 1em;
+						display: inline;
+					}
+					contexter-linkset {
+						width: 80%;
+						padding: 2px 4px;
+						font-size: 13px;
+						float: left;
+						font-weight: bold;
+						grid-row: 1;
+						grid-column: 1/2;
+						align-self: end;
+						justify-self: start;
 					}
 					/* Extra small devices (phones, 600px and down) */
-					@media only screen and (max-width: 600px) {...}
+					@media only screen and (max-width: 600px) {
+						:host {
+						width: 310px;
+						}
+					}
 					/* Small devices (portrait tablets and large phones, 600px and up) */
 					@media only screen and (min-width: 600px) {...}
 					/* Medium devices (landscape tablets, 768px and up) */
@@ -265,84 +360,33 @@ window.contexterSetup = window.contexterSetup ? window.contexterSetup : function
 					/* Extra large devices (large laptops and desktops, 1200px and up) */
 					@media only screen and (min-width: 1200px) {...}
 					@media (prefers-color-scheme: dark){
-
-					}
-					// can only select top-level nodes with slotted
-					::slotted(*) {
-					  max-width: 100%;
-					  display:block;
-					}
-					::slotted([slot=thumbnail]) {
-					  max-width: 100%;
-					  display:block;
-					}
-					::slotted([slot=header]) {
-					  width: 100%;
-					  font-size: 1.25rem;
-					  font-weight: bold;
-					  display:block;
-					  margin-bottom: 6px;
-					}
-					::slotted([slot=author]) {
-					  max-width: 50%;
-					  font-size: 12px;
-					  display:inline-block;
-					  float: left;
-					}
-					::slotted([slot=time]) {
-					  max-width: 50%;
-					  font-size: 12px;
-					  display:inline-block;
-					  float: right;
-					}
-					::slotted([slot=summary]) {
-					  width: 100%;
-					  margin-top: 6px;
-					  padding: 10px 2px;
-					  border-top: 1px solid black;
-					  font-size: 15px;
-					  display:inline-block;
-					  margin-bottom: 6px;
-					}
-					contexter-meta {
-					  height: auto;
-					  margin-bottom: 4px;
-					  width: 100%;
-					  display: grid;
-					  position: relative;
-					  min-height: 16px;
-					  grid-template-columns: repeat(2, 1fr);
-					}
-					::slotted([slot=keywords]):not(:empty) {
-					  width: 80%;
-					  padding: 2px 4px;
-					  border-top: 1px solid black;
-					  font-size: 11px;
-					  display: block;
-					  float: right;
-					  font-style: italic;
-					  text-align: right;
-					  grid-column: 2/2;
-					  grid-row: 1;
-					  align-self: end;
-					  justify-self: end;
-					}
-					::slotted([slot=links]) {
-					  width: 80%;
-					  padding: 2px 4px;
-					  font-size: 13px;
-					  float: left;
-					  font-weight: bold;
-					  grid-row: 1;
-					  grid-column: 1/2;
-					  align-self: end;
-					  justify-self: start;
+						:host {
+						--background: #354150;
+						--border: #1f2b37;
+						--blue: #55b0ff;
+						--font-color: #ffffff;
+						--inner-border: #787a7c;
+						background: var(--background);
+						border: 1px solid var(--border)
+						}
 					}
 				\`;
 			var lightDomStyle = document.createElement("style");
 			lightDomStyle.innerHTML = \`
 					contexter-box {
-					  contain: paint style size;
+						contain: content;
+					}
+					contexter-box .read-link {
+						font-weight: bold;
+					}
+					contexter-box a {
+						color: #0000ee;
+					}
+					contexter-box img {
+						width: 100%;
+						border: 0;
+						padding: 0;
+						margin: 0;
 					}
 					/* Extra small devices (phones, 600px and down) */
 					@media only screen and (max-width: 600px) {...}
@@ -355,19 +399,9 @@ window.contexterSetup = window.contexterSetup ? window.contexterSetup : function
 					/* Extra large devices (large laptops and desktops, 1200px and up) */
 					@media only screen and (min-width: 1200px) {...}
 					@media (prefers-color-scheme: dark){
-
-					}
-					contexter-box .read-link {
-					  font-weight: bold;
-					}
-					contexter-box a {
-						color: #0000ee;
-					}
-					contexter-box img {
-					  width: 100%;
-					  border: 0;
-					  padding: 0;
-					  margin: 0;
+						contexter-box a {
+						color: #55b0ff;
+						}
 					}
 			\`;
 			this.appendChild(lightDomStyle);
@@ -400,24 +434,30 @@ window.contexterSetup = window.contexterSetup ? window.contexterSetup : function
 			const innerSlotInfo = document.createElement('slot');
 			innerSlotInfo.name = "keywords"
 			metaContainer.appendChild(innerSlotInfo)
-			const innerSlotLinks= document.createElement('slot');
-			innerSlotLinks.name = "links"
-			metaContainer.appendChild(innerSlotLinks)
+
+			const linkContainer = document.createElement("contexter-linkset");
+			metaContainer.appendChild(linkContainer)
+			const innerSlotArchiveLink = document.createElement('slot');
+			innerSlotArchiveLink.name = "archive-link"
+			linkContainer.appendChild(innerSlotArchiveLink)
+			const innerSlotReadLink = document.createElement('slot');
+			innerSlotReadLink.name = "read-link"
+			linkContainer.appendChild(innerSlotReadLink)
 
 			this.className = "contexter-box";
 			this.onclick = (e) => {
-			  // console.log('Click on block', this)
-			  if (!e.target.className.includes('read-link') && !e.target.className.includes('title-link')) {
+				// console.log('Click on block', this)
+				if (!e.target.className.includes('read-link') && !e.target.className.includes('title-link')) {
 				const mainLinks = this.querySelectorAll('a.main-link');
 				// console.log('mainLink', e, mainLinks)
 				mainLinks[0].click()
-			  }
+				}
 			}
-		  }
+			}
 		}
-	  }
+		}
 
-	  customElements.define("contexter-box", ContexterBox);
+		customElements.define("contexter-box", ContexterBox);
 }
 if (!window.contexterSetupComplete){
 	window.contexterSetup();
@@ -565,7 +605,7 @@ const createArchiveLink = (data = linkDataObj) => {
 	} else {
 		archiveLink = data.archivedData.link;
 	}
-	return `<a href="${archiveLink}" is="contexter-link" target="_blank" class="read-link archive-link" itemprop="archivedAt">Archived</a>`;
+	return `<a href="${archiveLink}" is="contexter-link" target="_blank" class="read-link archive-link" itemprop="archivedAt" slot="archive-link">Archived</a>`;
 };
 
 const createLinkBlock = (data = linkDataObj) => {
@@ -587,10 +627,10 @@ ${createInlineScript()}
 		${createDatetimeBlock(data)}
 		${createSummaryBlock(data)}
 		${createTopics(data)}
-	<contexter-linkset class="links" slot="links">
-        ${createArchiveLink(data)}&nbsp;|&nbsp;
-        <a is="contexter-link" href="${bestLink}" class="read-link main-link" itemprop="sameAs">Read</a>
-    </contexter-linkset>
+
+        ${createArchiveLink(data)}
+		<a is="contexter-link" href="${bestLink}" class="read-link main-link" itemprop="sameAs" slot="read-link">Read</a>
+
 </contexter-box>
   `;
 	// Tabbed HTML gets put into a code block.

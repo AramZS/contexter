@@ -97,6 +97,42 @@ const getTwitterClient = () => {
 	return v2Client;
 };
 
+const getUser = async (userId) => {
+	const userObject = await getTwitterClient().user(`${userId}`, {
+		"user.fields": [
+			"id",
+			"location",
+			"name",
+			"entities",
+			"profile_image_url",
+			"url",
+			"username",
+			"description",
+		],
+	});
+	return userObject.data;
+};
+
+const getSingleTweet = async (tweetID) => {
+	// console.log(tweetID);
+	var tweet = await getTwitterClient().singleTweet(`${tweetID}`, tweetFields);
+	const authorData = {};
+	if (tweet.data.author_id) {
+		tweet.data.author_data = await getUser(tweet.data.author_id);
+	}
+	if (tweet.data.in_reply_to_user_id) {
+		if (tweet.data.in_reply_to_user_id == tweet.data.author_id) {
+			tweet.data.in_reply_to_user_data = authorData;
+		} else {
+			tweet.data.in_reply_to_user_data = await getUser(
+				tweet.data.in_reply_to_user_id
+			);
+		}
+	}
+
+	return tweet;
+};
+
 const getRepliedTo = (tweetData) => {
 	if (tweetData.referenced_tweets && tweetData.referenced_tweets.length) {
 		const repliedTo = tweetData.referenced_tweets.find((tweet) => {
@@ -120,7 +156,7 @@ const getRepliedTo = (tweetData) => {
 const getTweetByUrl = async (url) => {
 	var tweetID = url.match(/(?<=status\/).*(?=\/|)/i)[0]; // "https://twitter.com/Chronotope/status/1275920609097199628";
 	// console.log(tweetID);
-	var tweet = await getTwitterClient().singleTweet(`${tweetID}`, tweetFields);
+	var tweet = await getSingleTweet(tweetID);
 	/** console.dir(tweet);
 	console.dir(tweet.data.referenced_tweets);
 	console.dir(tweet.data.entities.mentions);
@@ -227,10 +263,7 @@ const getTweetThread = async (tweetObj = defaultTweetObj) => {
 				nextTweet = getRepliedTo(tweetData);
 				// console.log("nextTweet true", nextTweet);
 			}
-			var tweet = await getTwitterClient().singleTweet(
-				`${nextTweet}`,
-				tweetFields
-			);
+			var tweet = await getSingleTweet(nextTweet);
 			// promises.push(tweet);
 			// console.log("tweet true", tweet);
 			// console.dir(tweet.data.referenced_tweets);
@@ -279,7 +312,7 @@ const getQuotedTweet = async (tweetData = defaultTweetObj.data) => {
 	if (tweetId === false) {
 		return tweets;
 	}
-	var tweet = await getTwitterClient().singleTweet(`${tweetId}`, tweetFields);
+	var tweet = await getSingleTweet(tweetId);
 	tweets.quotedTweet = tweet;
 	var threadOfTweets = await getTweetThread(tweet);
 	if (false != threadOfTweets) {
@@ -390,7 +423,7 @@ const getTweets = async (url) => {
 	let enrichedThread = thread.map(async (tweetData, i) => {
 		const quotedData = quotedDataArray[i];
 		return {
-			tweetData,
+			data: tweetData,
 			tweetText: tweetData.text,
 			tweetLinks: getLinksFromTweet(tweetData), // []
 			tweetLinkData: getTwitterLinkData(tweetData), // []
@@ -415,4 +448,5 @@ module.exports = {
 	getLinksFromTweet,
 	getTwitterLinkData,
 	getTweets,
+	getUser,
 };

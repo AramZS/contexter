@@ -454,8 +454,7 @@ const getLinkData = async (
 				async (element, index) => {
 					// console.log("Element", element);
 					const oembedData = await fetchOEmbed(
-						"https://twitter.com/twitter/status/" +
-							element.tweetData.id
+						"https://twitter.com/twitter/status/" + element.data.id
 					);
 					let oembedHtml = oembedData;
 					// console.log("oembedData");

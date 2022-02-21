@@ -35,9 +35,10 @@ const pullMetadataFromRDFProperty = (documentObj, topNode, propType) => {
 		`meta[${propType}^='${topNode}']`
 	);
 	const openGraphObject = Array.from(graphNodes).reduce((prev, curr) => {
-		const keyValue = curr.attributes
-			.item(0)
-			.nodeValue.replace(`${topNode}`, "");
+		const keyValue = curr.attributes[propType].nodeValue.replace(
+			`${topNode}`,
+			""
+		);
 		if (prev.hasOwnProperty(keyValue)) {
 			const lastValue = prev[keyValue];
 			if (Array.isArray(lastValue)) {
@@ -251,9 +252,6 @@ const assignPrimaryProperties = (metadataLinkObj) => {
 			if (metadataLinkObj.jsonLd && metadataLinkObj.jsonLd.dateModified) {
 				finalizedMeta[key] = metadataLinkObj.jsonLd.dateModified;
 			}
-			if (!finalizedMeta[key]) {
-				finalizedMeta[key] = new Date().toISOString();
-			}
 		}
 	});
 	finalizedMeta.title = metadataLinkObj.jsonLd.headline
@@ -312,6 +310,30 @@ const assignPrimaryProperties = (metadataLinkObj) => {
 		} else {
 			finalizedMeta.subject = finalizedMeta.topics;
 		}
+	}
+	if (
+		metadataLinkObj.readabilityObject &&
+		metadataLinkObj.readabilityObject.title &&
+		(!finalizedMeta.title ||
+			finalizedMeta.title.length <
+				metadataLinkObj.readabilityObject.title)
+	) {
+		finalizedMeta.title = metadataLinkObj.readabilityObject.title;
+	}
+	if (
+		metadataLinkObj.readabilityObject &&
+		metadataLinkObj.readabilityObject.excerpt &&
+		(!finalizedMeta.description ||
+			finalizedMeta.description.length <
+				metadataLinkObj.readabilityObject.excerpt)
+	) {
+		finalizedMeta.description = metadataLinkObj.readabilityObject.excerpt;
+	}
+	if (finalizedMeta.image && Array.isArray(finalizedMeta.image)) {
+		finalizedMeta.image = finalizedMeta.image[0];
+	}
+	if (!finalizedMeta.date) {
+		finalizedMeta.date = new Date().toISOString();
 	}
 	// console.log("finalizedMeta", finalizedMeta);
 	return finalizedMeta;
@@ -425,6 +447,7 @@ const getLinkData = async (
 			const oneOrMoreTweets = await twitterTools.getTweets(
 				linkObj.sanitizedLink
 			);
+			let isTweetThread = false;
 			// console.log("getTweets");
 			// console.dir(oneOrMoreTweets);
 			const oembedObjectSeries = oneOrMoreTweets.map(
@@ -434,9 +457,14 @@ const getLinkData = async (
 						"https://twitter.com/twitter/status/" +
 							element.tweetData.id
 					);
+					let oembedHtml = oembedData;
 					// console.log("oembedData");
 					// console.dir(oembedData);
-					return oembedData;
+					if (index > 0) {
+						// https://developer.twitter.com/en/docs/twitter-for-websites/embedded-tweets/overview
+						isTweetThread = true;
+					}
+					return oembedHtml;
 				},
 				""
 			);
@@ -462,6 +490,12 @@ const getLinkData = async (
 				lastOembed.html = oembedSeries + scriptTag;
 			} else {
 				lastOembed.html = oembedSeries;
+			}
+			if (isTweetThread) {
+				lastOembed.html = lastOembed.html.replace(
+					/\<blockquote /g,
+					`<blockquote data-conversation="none" `
+				);
 			}
 			// console.log("Final oEmbed", lastOembed);
 			linkDataObj.twitterObj = oneOrMoreTweets;

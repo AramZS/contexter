@@ -59,6 +59,13 @@ describe("The Link Request Module", function () {
 			"twitter",
 			"basic",
 		]);
+		const htmlPage2 = require("./htmlPageSample2")([
+			"og",
+			"json",
+			"dc",
+			"twitter",
+			"basic",
+		]);
 		const jsdom = require("jsdom");
 		const { JSDOM } = jsdom;
 		it("should retrieve basic metadata from an HTML document", async function () {
@@ -86,7 +93,7 @@ describe("The Link Request Module", function () {
 				"social-media",
 			]);
 		});
-		it("should retrieve opengraph data from an HTML document", function () {
+		it.only("should retrieve opengraph data from an HTML document", function () {
 			const jsDom = new JSDOM(htmlPage);
 			const result = linkModule.processMetadata(jsDom.window);
 			result.opengraph.title.should.equal(
@@ -98,6 +105,15 @@ describe("The Link Request Module", function () {
 			);
 			result.opengraph.url.should.equal(
 				"http://aramzs.github.io/jekyll/social-media/2015/11/11/be-social-with-jekyll.html"
+			);
+			const jsDom2 = new JSDOM(htmlPage2);
+			const result2 = linkModule.processMetadata(jsDom2.window);
+			result2.opengraph.url.should.equal("https://conifer.rhizome.org");
+			result2.opengraph.description.should.equal(
+				"Collect and revisit web pages — Free, open-source web archiving service."
+			);
+			result2.opengraph.image.should.equal(
+				"https://conifer.rhizome.org/static/conifer-social.jpg"
 			);
 		});
 		it("should retrieve opengraph type data from an HTML document", function () {

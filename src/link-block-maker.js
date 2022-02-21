@@ -306,7 +306,7 @@ const createInlineScript = () => {
 						min-height: 16px;
 						grid-template-columns: repeat(2, 1fr);
 					}
-					::slotted([slot=keywords]):not(:empty) {
+					::slotted([slot=keywords]) {
 						width: 80%;
 						padding: 2px 4px;
 						border-top: 1px solid var(--inner-border);
@@ -319,6 +319,9 @@ const createInlineScript = () => {
 						grid-row: 1;
 						align-self: end;
 						justify-self: end;
+					}
+					::slotted([slot=keywords]):empty {
+						border-top: 0px solid var(--inner-border);
 					}
 					::slotted([slot=archive-link]) {
 						font-size: 1em;

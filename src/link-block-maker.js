@@ -257,6 +257,7 @@ const createInlineScript = () => {
 						box-sizing: border-box;
 						margin: 6px;
 						contain: content;
+						margin: 6px auto;
 					}
 
 					// can only select top-level nodes with slotted
@@ -305,7 +306,7 @@ const createInlineScript = () => {
 						min-height: 16px;
 						grid-template-columns: repeat(2, 1fr);
 					}
-					::slotted([slot=keywords]) {
+					::slotted([slot=keywords]):not(:empty) {
 						width: 80%;
 						padding: 2px 4px;
 						border-top: 1px solid var(--inner-border);
@@ -497,6 +498,9 @@ const createByline = (data = linkDataObj) => {
 		if (!author) {
 			author = data.finalizedMeta.publisher;
 		}
+	}
+	if (!author) {
+		return "";
 	}
 	return `<contexter-byline class="p-author author" slot="author">
 	<span class="p-name byline" rel="author" itemprop="author">${author}</span>

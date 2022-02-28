@@ -612,7 +612,7 @@ const createArchiveLink = (data = linkDataObj) => {
 	} else {
 		archiveLink = data.archivedData.link;
 	}
-	return `<a href="${archiveLink}" is="contexter-link" target="_blank" class="read-link archive-link" itemprop="archivedAt" slot="archive-link">Archived</a>`;
+	return `<a href="${archiveLink}" is="contexter-link" target="_blank" rel="timemap" class="read-link archive-link" itemprop="archivedAt" slot="archive-link">Archived</a>`;
 };
 
 const createLinkBlock = (data = linkDataObj) => {

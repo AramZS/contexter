@@ -26,5 +26,17 @@ describe("The Link Archiver Module", function () {
 				true
 			);
 		});
+		it("should send a URL to robust links", async function () {
+			const result = await linkModule.pushToRobustLinks(
+				"https://aramzs.github.io/fun/2020/11/09/spotify-asks-listeners-to-hack-its-algorithm.html"
+			);
+			console.dir(result);
+			expect(result).to.have.property("anchor_text");
+			expect(result.anchor_text).to.equal("Context Archive Link");
+			expect(result).to.have.property("data-versionurl");
+			expect(
+				/https:\/\/.*archive/.test(result["data-versionurl"])
+			).to.equal(true);
+		});
 	});
 });

@@ -363,7 +363,7 @@ const getLinkData = async (
 		link: "",
 		sanitizedLink: "",
 	},
-	tweetScriptEmbed = true
+	tweetScriptEmbed = false
 ) => {
 	const personObject = {
 		"@type": false,

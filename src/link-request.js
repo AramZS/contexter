@@ -504,6 +504,12 @@ const getLinkData = async (
 		}
 		const jsDom = new JSDOM(responseText);
 		const DOMWindowObject = jsDom.window;
+		// Check for non-status-based error pages
+		// Bot detected titles
+		const cloudflareBlock = RegExp("Attention Required");
+		const fourOhThreeBlock = RegExp("403");
+		const humanCheckBlock = RegExp("Are you a human");
+
 		// Meta name
 		Object.assign(linkDataObj, processMetadata(DOMWindowObject));
 		if (linkDataObj.metadata && linkDataObj.metadata.canonical) {

@@ -64,7 +64,8 @@ const selectUserAgent = (link, shuffleExclude = false) => {
 	} else {
 		const keys = Object.keys(userAgents);
 		if (shuffleExclude) {
-			var index = keys.indexOf(shuffleExclude);
+			const values = Object.values(userAgents);
+			var index = values.indexOf(shuffleExclude);
 			if (index > -1) {
 				keys.splice(index, 1);
 			}

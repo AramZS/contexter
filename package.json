@@ -1,6 +1,6 @@
 {
 	"name": "link-contexter",
-	"version": "0.5.1",
+	"version": "0.6.1",
 	"description": "A tool for turning links into context boxes that are much more useful than bare links.",
 	"main": "src/index.js",
 	"scripts": {
@@ -19,6 +19,7 @@
 	"dependencies": {
 		"@braintree/sanitize-url": "^5.0.2",
 		"@mozilla/readability": "^0.4.1",
+		"abort-controller": "^3.0.0",
 		"archive.is": "^0.0.2",
 		"chai": "^4.3.4",
 		"chai-as-promised": "^7.1.1",

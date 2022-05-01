@@ -615,14 +615,15 @@ const createArchiveLink = (data = linkDataObj) => {
 	return `<a href="${archiveLink}" is="contexter-link" target="_blank" rel="timemap" class="read-link archive-link" itemprop="archivedAt" slot="archive-link">Archived</a>`;
 };
 
-const createLinkBlock = (data = linkDataObj) => {
+const createLinkBlock = (data = linkDataObj, excludeScript = false) => {
 	const bestLink = getBestLink(data);
 	const oembed = useOembed(data);
 	if (oembed) {
 		return oembed;
 	}
+	const inlineScript = excludeScript ? "" : createInlineScript();
 	const linkBlock = `
-${createInlineScript()}
+${inlineScript}
 <contexter-box class="link-card h-entry hentry" itemscope="" itemtype="https://schema.org/CreativeWork">
     <contexter-thumbnail class="thumbnail" slot="thumbnail">
       ${createImageBlock(data)}
@@ -647,4 +648,5 @@ ${createInlineScript()}
 
 module.exports = {
 	createLinkBlock,
+	createInlineScript,
 };

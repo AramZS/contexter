@@ -34,4 +34,6 @@ module.exports = {
 	sanitizeLink,
 	uidLink,
 	context,
+	createLinkBlock: createLinkHTMLCard.createLinkBlock,
+	createInlineScript: createLinkHTMLCard.createInlineScript,
 };

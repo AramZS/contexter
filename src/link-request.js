@@ -509,7 +509,23 @@ const getLinkData = async (
 		const cloudflareBlock = RegExp("Attention Required");
 		const fourOhThreeBlock = RegExp("403");
 		const humanCheckBlock = RegExp("Are you a human");
-
+		const robotCheckBlock = RegExp("Are you a robot");
+		let wasIBlocked = false;
+		const pageTitle = jsDom.window.document.title;
+		if (pageTitle) {
+			if (
+				cloudflareBlock.test(pageTitle) ||
+				fourOhThreeBlock.test(pageTitle) ||
+				humanCheckBlock.test(pageTitle) ||
+				robotCheckBlock.test(pageTitle)
+			) {
+				if (linkDataObj.twitterObj || linkDataObj.oembed) {
+					return linkDataObj;
+				} else {
+					return false;
+				}
+			}
+		}
 		// Meta name
 		Object.assign(linkDataObj, processMetadata(DOMWindowObject));
 		if (linkDataObj.metadata && linkDataObj.metadata.canonical) {

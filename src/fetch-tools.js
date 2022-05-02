@@ -127,14 +127,9 @@ const fetchUrl = async (
 		  };
 	const controller = new AbortController();
 	const fetchTimeout = setTimeout(() => {
-		console.log("Request timed out for", link, userAgent);
-		if (linkObj.source.length < 3) {
-			linkObj.source = link;
-			linkObj.title =
-				"Request Timed Out for: " + link + " with " + userAgent;
-		}
+		console.log("Request timed out for", url, userAgent);
 		controller.abort();
-	}, 6000);
+	}, 35000);
 	finalOptions.headers = getRequestHeaders();
 	if (userAgent) {
 		finalOptions.headers["User-Agent"] =
@@ -157,6 +152,7 @@ const fetchUrl = async (
 	}
 	if (retryCount < 3) {
 		try {
+			console.log("Retry occurring for time:", retryCount);
 			response = checkStatus(response);
 			clearTimeout(fetchTimeout);
 			return response;

@@ -25,10 +25,13 @@ describe("The Link Request Module", function () {
 		});
 	});
 	it("should return a false on an invalid URL", async function () {
-		const result = await linkModule.fetchUrl(
-			"https://apiz.githubz.comzs/repos/AramZS/devblog/git/refs/heads/main"
-		);
-		result.should.be.false;
+		chai.use(eventually);
+		expect(
+			linkModule.fetchUrl(
+				"https://apiz.githubz.comzs/repos/AramZS/devblog/git/refs/heads/main"
+			)
+		).to.eventually.throw();
+		// result.should.be.false;
 	});
 	describe("handle oembed requests", function () {
 		this.timeout(8000);

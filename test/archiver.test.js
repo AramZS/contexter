@@ -9,7 +9,7 @@ require("dotenv").config();
 const linkModule = require("../src/link-archiver");
 
 describe("The Link Archiver Module", function () {
-	describe("should archive a basic URL", function () {
+	it("should archive a basic URL", function () {
 		this.timeout(90000);
 		it.skip("should send a URL to archive.is", async function () {
 			const result = await linkModule.pushToArchiveIs(

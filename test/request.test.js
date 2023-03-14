@@ -19,7 +19,7 @@ describe("The Link Request Module", function () {
 			// console.log(textResponse);
 			textResponse
 				.includes(
-					'"url":"https://api.github.com/repos/AramZS/devblog/git/refs/heads/main"'
+					'"https://api.github.com/repos/AramZS/devblog/git/refs/heads/main"'
 				)
 				.should.equal(true);
 		});
@@ -33,7 +33,7 @@ describe("The Link Request Module", function () {
 		).to.eventually.throw();
 		// result.should.be.false;
 	});
-	describe("handle oembed requests", function () {
+	it("should handle oembed requests", function () {
 		this.timeout(8000);
 		it("should retrieve oembed from a basic URL", async function () {
 			const result = await linkModule.fetchOEmbed(

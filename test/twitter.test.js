@@ -17,7 +17,7 @@ describe("The Twitter Archive Module", function () {
 				data: {
 					id: "15099054",
 
-					name: "Aram Zucker-Scharff",
+					name: "Aram Zucker-Scharff | @Chronotope@indieweb.social",
 
 					username: "Chronotope",
 				},
@@ -29,7 +29,7 @@ describe("The Twitter Archive Module", function () {
 				data: {
 					id: "15099054",
 
-					name: "Aram Zucker-Scharff",
+					name: "Aram Zucker-Scharff | @Chronotope@indieweb.social",
 
 					username: "Chronotope",
 				},
@@ -48,21 +48,22 @@ describe("The Twitter Archive Module", function () {
 							url: {
 								urls: [
 									{
-										display_url: "bit.ly/aram",
+										display_url: "aramzs.glitch.me",
 										end: 23,
-										expanded_url: "http://bit.ly/aram",
+										expanded_url:
+											"https://aramzs.glitch.me/",
 										start: 0,
-										url: "https://t.co/2rHFiUBQX1",
+										url: "https://t.co/7Q4nkBAXMt",
 									},
 								],
 							},
 						},
 						id: "15099054",
 						location: "NYC, NY",
-						name: "Aram Zucker-Scharff",
+						name: "Aram Zucker-Scharff | @Chronotope@indieweb.social",
 						profile_image_url:
 							"https://pbs.twimg.com/profile_images/1077038356733796352/x492f_KO_normal.jpg",
-						url: "https://t.co/2rHFiUBQX1",
+						url: "https://t.co/7Q4nkBAXMt",
 						username: "Chronotope",
 					},
 					text: "@swodinsky Everything connected to the internet eventually becomes ads :/",
@@ -87,21 +88,21 @@ describe("The Twitter Archive Module", function () {
 					conversation_id: "1275917959618232320",
 					reply_settings: "everyone",
 					created_at: "2020-06-24T22:35:53.000Z",
-					source: "Twitter Web App",
+					edit_history_tweet_ids: ["1275920609097199628"],
 				},
 				includes: {
 					users: [
 						{
 							username: "Chronotope",
-							name: "Aram Zucker-Scharff",
+							name: "Aram Zucker-Scharff | @Chronotope@indieweb.social",
 							id: "15099054",
-							url: "https://t.co/2rHFiUBQX1",
+							url: "https://t.co/7Q4nkBAXMt",
 						},
 						{
 							username: "swodinsky",
-							name: "shoshana wodinsky (she/her)",
+							name: "shoshana wodinsky (she/her) is looking for work!",
 							id: "2908572178",
-							url: "https://t.co/MYBP7NgPOL",
+							url: "https://t.co/IvMRFis2Zt",
 						},
 					],
 					tweets: [
@@ -109,11 +110,11 @@ describe("The Twitter Archive Module", function () {
 							possibly_sensitive: false,
 							text: "@swodinsky I think that, unless something changes pretty radically at the regulatory level, that is a fair assumption.  https://t.co/aDY7rAbJYd",
 							id: "1275920325000278020",
-							source: "Twitter Web App",
 							author_id: "15099054",
 							in_reply_to_user_id: "2908572178",
 							reply_settings: "everyone",
 							created_at: "2020-06-24T22:34:45.000Z",
+							edit_history_tweet_ids: ["1275920325000278020"],
 							entities: {
 								urls: [
 									{
@@ -160,21 +161,21 @@ describe("The Twitter Archive Module", function () {
 					url: {
 						urls: [
 							{
-								display_url: "bit.ly/aram",
+								display_url: "aramzs.glitch.me",
 								end: 23,
-								expanded_url: "http://bit.ly/aram",
+								expanded_url: "https://aramzs.glitch.me/",
 								start: 0,
-								url: "https://t.co/2rHFiUBQX1",
+								url: "https://t.co/7Q4nkBAXMt",
 							},
 						],
 					},
 				},
 				id: "15099054",
 				location: "NYC, NY",
-				name: "Aram Zucker-Scharff",
+				name: "Aram Zucker-Scharff | @Chronotope@indieweb.social",
 				profile_image_url:
 					"https://pbs.twimg.com/profile_images/1077038356733796352/x492f_KO_normal.jpg",
-				url: "https://t.co/2rHFiUBQX1",
+				url: "https://t.co/7Q4nkBAXMt",
 				username: "Chronotope",
 			});
 		});

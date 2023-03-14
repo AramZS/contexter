@@ -10,7 +10,7 @@ const { context } = require("../src/index");
 const linkModule = context;
 
 describe("The Whole Module", function () {
-	describe("should archive a basic URL", function async() {
+	it("should archive a basic URL", function async() {
 		this.timeout(90000);
 		it("should create a URL contexter object", async function () {
 			const result = await linkModule(
@@ -151,11 +151,13 @@ describe("The Whole Module", function () {
 				"topics"
 			);
 			result.data.jsonLd.should.have.keys(
+				"@context",
 				"@type",
 				"headline",
 				"description",
 				"image",
 				"mainEntityOfPage",
+				"potentialAction",
 				"datePublished",
 				"dateModified",
 				"isAccessibleForFree",
@@ -164,6 +166,7 @@ describe("The Whole Module", function () {
 				"license",
 				"author",
 				"publisher",
+				"url",
 				"editor"
 			);
 			result.data.metadata.should.have.keys(

@@ -13,7 +13,7 @@ const linkModule = require("../src/link-block-maker");
 const linkRequest = require("../src/link-request");
 
 describe("The Link Block Maker Module", function () {
-	describe("should create a block from a basic URL", function () {
+	it("should create a block from a basic URL", function () {
 		this.timeout(5000);
 		let result = {};
 		before(async () => {

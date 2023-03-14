@@ -579,7 +579,7 @@ const createDatetimeBlock = (data = linkDataObj) => {
 	try {
 		const dateObj = new Date(date);
 		if (dateObj && dateObj != "Invalid Date" && dateObj != "NaN") {
-			return `<time class="dt-published published" slot="time" itemprop="datePublished" datetime="${dateObj.toISOString()}">${dateObj.getMonth()}/${dateObj.getDate()}/${dateObj.getFullYear()}</time>`;
+			return `<time class="dt-published published" slot="time" itemprop="datePublished" datetime="${dateObj.toISOString()}">${(dateObj.getMonth())+1}/${dateObj.getDate()}/${dateObj.getFullYear()}</time>`;
 		} else {
 			return "";
 		}

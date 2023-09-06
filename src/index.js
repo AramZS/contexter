@@ -4,7 +4,7 @@ const createLinkArchive = require("./link-archiver");
 const uidLink = require("./link-uid");
 const createLinkHTMLCard = require("./link-block-maker");
 
-const context = async (link) => {
+const context = async (link, isArchiveLink, canonicalLink) => {
 	const saneLink = sanitizeLink(link);
 	const linkResult = await requestLink.getLinkData({
 		sanitizedLink: saneLink,
@@ -13,7 +13,18 @@ const context = async (link) => {
 	if (!linkResult || linkResult.status != 200) {
 		return false;
 	}
-	const linkArchivedData = await createLinkArchive.archiveLink(saneLink);
+	let linkArchivedData = {
+		link: false,
+		wayback: false,
+	};
+	if (isArchiveLink) {
+		linkArchivedData = await createLinkArchive.archiveLink(saneLink);
+	} else {
+		linkArchivedData = {
+			link: link,
+			wayback: false,
+		};
+	}
 	const linkId = uidLink(linkResult.sanitizedLink);
 	const finalLink = linkResult.canonical
 		? linkResult.canonical
@@ -21,7 +32,7 @@ const context = async (link) => {
 	linkResult.archivedData = linkArchivedData;
 	const linkHTMLEmbed = createLinkHTMLCard.createLinkBlock(linkResult);
 	return {
-		initialLink: link,
+		initialLink: isArchiveLink && canonicalLink ? canonicalLink : link,
 		sanitizedLink: saneLink,
 		finalLink: finalLink,
 		htmlEmbed: linkHTMLEmbed,

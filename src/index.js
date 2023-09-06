@@ -17,7 +17,7 @@ const context = async (link, isArchiveLink, canonicalLink) => {
 		link: false,
 		wayback: false,
 	};
-	if (isArchiveLink) {
+	if (!isArchiveLink) {
 		linkArchivedData = await createLinkArchive.archiveLink(saneLink);
 	} else {
 		linkArchivedData = {

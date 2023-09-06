@@ -1,6 +1,6 @@
 {
 	"name": "link-contexter",
-	"version": "0.7.0",
+	"version": "0.7.1",
 	"description": "A tool for turning links into context boxes that are much more useful than bare links.",
 	"main": "src/index.js",
 	"scripts": {

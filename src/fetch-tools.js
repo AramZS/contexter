@@ -118,18 +118,22 @@ const fetchUrl = async (
 ) => {
 	let response = false;
 	await timeout(2000);
-	let finalOptions = options
-		? options
-		: {
-				method: "GET",
-				redirect: "follow",
-				compress: true,
-		  };
+	let defaultOptions = {
+		method: "GET",
+		redirect: "follow",
+		compress: true,
+		timeout: 35000,
+	};
+	let finalOptions = {
+		...defaultOptions,
+		...options,
+	};
 	const controller = new AbortController();
 	const fetchTimeout = setTimeout(() => {
 		console.log("Request timed out for", url, userAgent);
 		controller.abort();
-	}, 35000);
+	}, finalOptions.timeout);
+	delete finalOptions.timeout;
 	finalOptions.headers = getRequestHeaders();
 	if (userAgent) {
 		finalOptions.headers["User-Agent"] =

@@ -4,11 +4,12 @@ const createLinkArchive = require("./link-archiver");
 const uidLink = require("./link-uid");
 const createLinkHTMLCard = require("./link-block-maker");
 
-const context = async (link, isArchiveLink, canonicalLink) => {
+const context = async (link, isArchiveLink, canonicalLink, timeout) => {
 	const saneLink = sanitizeLink(link);
 	const linkResult = await requestLink.getLinkData({
 		sanitizedLink: saneLink,
 		link: link,
+		timeout: timeout || 35000,
 	});
 	if (!linkResult || linkResult.status != 200) {
 		return false;
@@ -18,7 +19,10 @@ const context = async (link, isArchiveLink, canonicalLink) => {
 		wayback: false,
 	};
 	if (!isArchiveLink) {
-		linkArchivedData = await createLinkArchive.archiveLink(saneLink);
+		linkArchivedData = await createLinkArchive.archiveLink(
+			saneLink,
+			timeout || 35000
+		);
 	} else {
 		linkArchivedData = {
 			link: link,

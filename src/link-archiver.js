@@ -14,7 +14,7 @@ const pushToArchiveIs = async (url) => {
 };
 
 // https://robustlinks.mementoweb.org/api-docs/
-const pushToRobustLinks = async (url) => {
+const pushToRobustLinks = async (url, timeout) => {
 	const archiveTool = "https://robustlinks.mementoweb.org/api/?";
 	const archivingPath = "anchor_text=";
 	const anchorText = encodeURIComponent("Context Archive Link");
@@ -22,7 +22,7 @@ const pushToRobustLinks = async (url) => {
 	const encodedUrl = encodeURIComponent(url);
 	const saveUrl = `${archiveTool}${archivingPath}${anchorText}&${urlPath}${encodedUrl}`;
 	try {
-		const response = await fetchUrl(saveUrl);
+		const response = await fetchUrl(saveUrl, { timeout });
 		if (response.status == 200) {
 			const data = await response.json();
 			return data;
@@ -34,14 +34,16 @@ const pushToRobustLinks = async (url) => {
 	}
 };
 
-const pushToWayback = async (url) => {
+const pushToWayback = async (url, timeout) => {
 	const archiveTool = "https://web.archive.org";
 	const archivingPath = "/save/";
 	const saveUrl = `${archiveTool}${archivingPath}${url}`;
 	try {
 		const response = await fetchUrl(
 			saveUrl,
-			false,
+			{
+				timeout,
+			},
 			"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:83.0) Gecko/20100101 Firefox/83.0"
 		);
 		if (response.status == 200) {
@@ -54,15 +56,15 @@ const pushToWayback = async (url) => {
 	}
 };
 
-const archiveLink = async (url) => {
+const archiveLink = async (url, timeout) => {
 	const archives = {
 		link: false,
 		wayback: false,
 	};
-	let waybackResult = await pushToWayback(url);
+	let waybackResult = await pushToWayback(url, timeout);
 	let archiveLi = false;
 	let finalLink = false;
-	let robustLinksPush = pushToRobustLinks(url);
+	let robustLinksPush = pushToRobustLinks(url, timeout);
 	if (robustLinksPush && robustLinksPush["data-versionurl"]) {
 		archiveLi = robustLinksPush["data-versionurl"];
 	}

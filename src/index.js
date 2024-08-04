@@ -4,7 +4,10 @@ const createLinkArchive = require("./link-archiver");
 const uidLink = require("./link-uid");
 const createLinkHTMLCard = require("./link-block-maker");
 
+import setConfig from "./config";
+
 const context = async (link, isArchiveLink, canonicalLink, timeout) => {
+	setConfig({ timeout: timeout || 35000 });
 	const saneLink = sanitizeLink(link);
 	const linkResult = await requestLink.getLinkData({
 		sanitizedLink: saneLink,

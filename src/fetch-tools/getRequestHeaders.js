@@ -1,4 +1,4 @@
-export default getRequestHeaders = () => {
+export default (ua) => {
 	return {
 		cookie: "usprivacy=1YYY",
 		Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",

@@ -1,8 +1,8 @@
 import fetch from "node-fetch";
 import AbortController from "abort-controller";
-import getRequestHeaders from "./getRequestHeaders";
-import selectUserAgent from "./selectUserAgent";
-import { getConfigProp } from "../config";
+import getRequestHeaders from "./getRequestHeaders.js";
+import selectUserAgent from "./selectUserAgent.js";
+import { getConfigProp } from "../config/index.js";
 
 function timeoutCounter(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
@@ -43,7 +43,7 @@ const getRandomDelay = (delay) => {
 	return Math.floor(Math.random() * (delay - 1000 + 1) + 1000);
 };
 
-export default fetchUrl = async (
+export default async (
 	url,
 	fetchOptions = {
 		userAgent: true,
@@ -86,18 +86,20 @@ export default fetchUrl = async (
 		throw new Error("Timeout must be at least 2000ms");
 	}
 	const controller = new AbortController();
+
+	if (userAgent) {
+		userAgent =
+			userAgent === true
+				? selectUserAgent(url, [userAgentExclude])
+				: userAgent;
+	}
+
 	const fetchTimeout = setTimeout(() => {
 		console.log("Request timed out for", url, userAgent);
 		controller.abort();
 	}, timeout);
 
-	finalRequestOptions.headers = getRequestHeaders();
-	if (userAgent) {
-		finalRequestOptions.headers["User-Agent"] =
-			userAgent === true
-				? selectUserAgent(url, [userAgentExclude])
-				: userAgent;
-	}
+	finalRequestOptions.headers = getRequestHeaders(userAgent);
 	finalRequestOptions.signal = controller.signal;
 	try {
 		response = await fetch(url, finalRequestOptions);

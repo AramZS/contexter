@@ -1,7 +1,7 @@
 const ua =
 	"facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)";
 
-export default selectUserAgent = (link, shuffleExclude = false) => {
+export default (link, shuffleExclude = false) => {
 	let userAgent = ua;
 	// https://developers.whatismybrowser.com/useragents/explore/software_type_specific/?utm_source=whatismybrowsercom&utm_medium=internal&utm_campaign=breadcrumbs
 	// https://user-agents.net/lookup

@@ -1,12 +1,18 @@
 // config.js
-export let config = {
+let config = {
 	timeout: 35000, // Default timeout value
 };
 
-export function getConfigProp(prop) {
+function getConfigProp(prop) {
 	return config[prop];
 }
 
-export function setConfig(newConfig) {
+function setConfig(newConfig) {
 	config = { ...config, ...newConfig };
 }
+
+module.exports = {
+	setConfig,
+	getConfigProp,
+	config,
+};

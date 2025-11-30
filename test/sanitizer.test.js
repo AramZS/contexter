@@ -67,4 +67,61 @@ describe("The Link Sanitization Module", function () {
 			);
 		});
 	});
+
+	// Add these tests to existing sanitizer.test.js
+
+	describe("Marketing Parameter Stripping", function () {
+		it("should strip UTM parameters", function () {
+			linkModule(
+				"https://example.com?utm_source=test&utm_medium=email"
+			).should.equal("https://example.com");
+			linkModule(
+				"https://example.com?param=value&utm_campaign=test"
+			).should.equal("https://example.com?param=value");
+		});
+
+		it("should strip MailChimp parameters", function () {
+			linkModule(
+				"https://example.com?mc_cid=123&mc_eid=456"
+			).should.equal("https://example.com");
+		});
+
+		it("should strip YouTube tracking parameters", function () {
+			linkModule(
+				"https://www.youtube.com/watch?v=abc123&feature=share&app=desktop"
+			).should.equal("https://www.youtube.com/watch?v=abc123");
+		});
+
+		it("should strip HubSpot parameters", function () {
+			linkModule(
+				"https://example.com?_hsenc=test&_hsmi=123"
+			).should.equal("https://example.com");
+		});
+
+		it("should preserve important parameters while stripping tracking", function () {
+			linkModule(
+				"https://example.com?id=123&utm_source=test&page=2"
+			).should.equal("https://example.com?id=123&page=2");
+		});
+	});
+
+	describe("Edge Cases", function () {
+		it("should handle URLs with fragments", function () {
+			linkModule("example.com#section").should.equal(
+				"https://example.com#section"
+			);
+		});
+
+		it("should handle URLs with unusual ports", function () {
+			linkModule("example.com:8080/path").should.equal(
+				"https://example.com:8080/path"
+			);
+		});
+
+		it("should handle internationalized domain names", function () {
+			// Test handling of IDN domains
+			const result = linkModule("münchen.de");
+			result.should.include("https://");
+		});
+	});
 });

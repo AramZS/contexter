@@ -362,6 +362,7 @@ const getLinkData = async (
 	linkObj = {
 		link: "",
 		sanitizedLink: "",
+		timeout: 35000,
 	},
 	tweetScriptEmbed = false
 ) => {
@@ -434,7 +435,9 @@ const getLinkData = async (
 	// let fetchReadyLink = linkObj.sanitizedLink;
 	let response;
 	try {
-		response = await fetchUrl(linkObj.sanitizedLink);
+		response = await fetchUrl(linkObj.sanitizedLink, {
+			timeout: linkObj.timeout,
+		});
 	} catch (e) {
 		console.log("Link retrieve failed for " + linkObj.sanitizedLink, e);
 	}
